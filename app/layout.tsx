@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,11 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DHSI - Digital Hukum & Security Indonesia",
+  title: "DHSI - Dewan Hukum Siber Indonesia",
   description:
     "Platform pelatihan dan edukasi hukum digital, keamanan siber, dan perlindungan data",
 };
 
+import TanstackProvider from "@/lib/tanstack-provider";
+import { Toaster } from "sonner";
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +28,8 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>{children}</AuthProvider>
+        <Toaster richColors position="bottom-right" />
+        <TanstackProvider>{children}</TanstackProvider>
       </body>
     </html>
   );

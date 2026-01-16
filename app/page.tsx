@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar";
+// import Navbar from "@/components/navbar";
 import Hero from "@/components/hero";
 import LatestTrainingSection from "@/components/latest-training-section";
 import UpcomingWorkshopSection from "@/components/upcoming-workshop-section";
@@ -14,11 +14,11 @@ export default function Home() {
   return (
     <>
       <main className="">
-        <Navbar />
+        {/* <Navbar /> */}
         <Hero />
         <LatestTrainingSection />
         <UpcomingWorkshopSection />
-        <ClassesSection />
+        {/* <ClassesSection /> */}
         <FeaturesSection />
         <PastTrainingReviewSection />
         <TestimonialsSection />

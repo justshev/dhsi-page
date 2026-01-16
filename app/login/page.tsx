@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
 import {
   Card,
   CardContent,
@@ -23,44 +21,17 @@ import {
   Scale,
   AlertCircle,
 } from "lucide-react";
+import useLogin from "@/hooks/auth/use-login";
 
 export default function LoginPage() {
-  const { login, isLoading: authLoading } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    const result = await login(email, password);
-
-    if (!result.success) {
-      setError(result.error || "Terjadi kesalahan saat login");
-    }
-
-    setIsLoading(false);
-  };
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="h-8 w-8 animate-spin text-teal-500" />
-      </div>
-    );
-  }
-
+  const { formik, showPassword, toggleShowPassword } = useLogin();
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
       <div className="p-4">
         <Link
           href="/"
-          className="inline-flex items-center text-sm text-slate-300 hover:text-white transition-colors"
+          className="inline-flex items-center text-sm text-slate-300 transition-colors hover:text-white"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Kembali ke Beranda
@@ -68,31 +39,31 @@ export default function LoginPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-8">
+      <div className="flex flex-1 items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-teal-400 to-teal-600 shadow-lg mb-4">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-teal-400 to-teal-600 shadow-lg">
               <Scale className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white">DHSI</h1>
-            <p className="text-slate-400">Digital Hukum & Security Indonesia</p>
+            <p className="text-slate-400">Dewan Hukum Siber Indonesia</p>
           </div>
 
           <Card className="border-0 shadow-2xl">
             <CardHeader className="space-y-1 pb-4">
-              <CardTitle className="text-2xl text-center">Masuk</CardTitle>
+              <CardTitle className="text-center text-2xl">Masuk</CardTitle>
               <CardDescription className="text-center">
                 Masuk ke akun Anda untuk mengakses semua fitur
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={formik.handleSubmit} className="space-y-4">
                 {/* Error Message */}
-                {error && (
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 text-red-700 text-sm">
+                {formik.errors.email && (
+                  <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
                     <AlertCircle className="h-4 w-4 shrink-0" />
-                    <span>{error}</span>
+                    <span>{formik.errors.email}</span>
                   </div>
                 )}
 
@@ -100,14 +71,15 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <Input
                       id="email"
                       type="email"
+                      name="email"
                       placeholder="nama@email.com"
                       className="pl-10"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
                       required
                     />
                   </div>
@@ -125,20 +97,21 @@ export default function LoginPage() {
                     </Link>
                   </div>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
-                      className="pl-10 pr-10"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      className="pr-10 pl-10"
+                      name="password"
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
                       required
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      onClick={toggleShowPassword}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -153,9 +126,9 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   className="w-full bg-teal-500 hover:bg-teal-600"
-                  disabled={isLoading}
+                  disabled={formik.isSubmitting}
                 >
-                  {isLoading ? (
+                  {formik.isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Memproses...
@@ -166,8 +139,8 @@ export default function LoginPage() {
                 </Button>
 
                 {/* Demo Credentials */}
-                <div className="mt-4 p-3 rounded-lg bg-slate-50 text-sm">
-                  <p className="font-medium text-slate-700 mb-2">Demo Akun:</p>
+                <div className="mt-4 rounded-lg bg-slate-50 p-3 text-sm">
+                  <p className="mb-2 font-medium text-slate-700">Demo Akun:</p>
                   <div className="space-y-1 text-slate-600">
                     <p>
                       <span className="font-medium">User:</span> user@dhsi.com /
@@ -186,7 +159,7 @@ export default function LoginPage() {
                 <span className="text-slate-500">Belum punya akun? </span>
                 <Link
                   href="/register"
-                  className="text-teal-600 hover:underline font-medium"
+                  className="font-medium text-teal-600 hover:underline"
                 >
                   Daftar sekarang
                 </Link>

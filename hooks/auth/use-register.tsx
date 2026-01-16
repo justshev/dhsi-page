@@ -1,0 +1,50 @@
+import { useState } from "react";
+import { useFormik } from "formik";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+import { getErrorMessage } from "@/utils/error";
+import { registerRequest } from "@/services/auth/register";
+import { RegisterUserPayload } from "@/types/types";
+
+const useRegister = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: registerRequest,
+    onSuccess: async (data) => {
+      toast.success(data.message || "Registrasi berhasil");
+      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    },
+    onError: (error) => {
+      const message = getErrorMessage(error, "Registrasi gagal");
+
+      toast.error(message);
+    },
+  });
+
+  const formik = useFormik<RegisterUserPayload>({
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      phone: "",
+      confirmPassword: "",
+    } as RegisterUserPayload,
+    onSubmit: (values) => {
+      mutate(values);
+    },
+  });
+
+  const toggleShowPassword = () => setShowPassword((prev) => !prev);
+
+  return {
+    formik,
+    toggleShowPassword,
+    showPassword,
+    isLoading: isPending,
+  };
+};
+
+export default useRegister;
