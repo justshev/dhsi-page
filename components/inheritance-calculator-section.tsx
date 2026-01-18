@@ -103,7 +103,7 @@ export function InheritanceCalculatorSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-slate-600 text-slate-300 hover:bg-slate-800 gap-2"
+                  className="border-slate-600 text-slate-800 hover:bg-slate-800 gap-2"
                 >
                   <BookOpen className="h-5 w-5" />
                   Pelajari Lebih Lanjut

@@ -47,23 +47,13 @@ import {
   X,
   ArrowLeft,
 } from "lucide-react";
+import useGetUser from "@/hooks/auth/use-get-user";
 
 export default function ProfilePage() {
-  const { user, isLoading, logout, getUserProfileData } = useAuth();
-  const [activeTab, setActiveTab] = useState("classes");
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({
-    name: "",
-    phone: "",
-    occupation: "",
-    company: "",
-  });
-
-  const profile = getUserProfileData();
-
+  const { data: user, hasLoggedin, isLoading } = useGetUser();
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <Loader2 className="h-8 w-8 animate-spin text-teal-500" />
       </div>
     );
@@ -73,33 +63,23 @@ export default function ProfilePage() {
     return null;
   }
 
-  const startEditing = () => {
-    setEditData({
-      name: profile.name,
-      phone: profile.phone || "",
-      occupation: profile.occupation || "",
-      company: profile.company || "",
-    });
-    setIsEditing(true);
-  };
-
   const getStatusBadge = (status: EnrolledClass["status"]) => {
     switch (status) {
       case "completed":
         return (
-          <Badge className="bg-green-100 text-green-700 border-green-200 hover:bg-green-100">
+          <Badge className="border-green-200 bg-green-100 text-green-700 hover:bg-green-100">
             Selesai
           </Badge>
         );
       case "ongoing":
         return (
-          <Badge className="bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-100">
+          <Badge className="border-blue-200 bg-blue-100 text-blue-700 hover:bg-blue-100">
             Sedang Berjalan
           </Badge>
         );
       case "upcoming":
         return (
-          <Badge className="bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100">
+          <Badge className="border-amber-200 bg-amber-100 text-amber-700 hover:bg-amber-100">
             Akan Datang
           </Badge>
         );
@@ -112,7 +92,7 @@ export default function ProfilePage() {
         return (
           <Badge
             variant="outline"
-            className="border-slate-300 text-slate-600 bg-white"
+            className="border-slate-300 bg-white text-slate-600"
           >
             Kursus
           </Badge>
@@ -121,7 +101,7 @@ export default function ProfilePage() {
         return (
           <Badge
             variant="outline"
-            className="border-teal-300 text-teal-700 bg-teal-50"
+            className="border-teal-300 bg-teal-50 text-teal-700"
           >
             Pelatihan
           </Badge>
@@ -130,7 +110,7 @@ export default function ProfilePage() {
         return (
           <Badge
             variant="outline"
-            className="border-purple-300 text-purple-700 bg-purple-50"
+            className="border-purple-300 bg-purple-50 text-purple-700"
           >
             Workshop
           </Badge>
@@ -164,15 +144,15 @@ export default function ProfilePage() {
         <div className="container mx-auto px-4 py-6">
           <Link
             href="/"
-            className="inline-flex items-center text-sm text-slate-300 hover:text-white mb-4 transition-colors"
+            className="mb-4 inline-flex items-center text-sm text-slate-300 transition-colors hover:text-white"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Kembali ke Beranda
           </Link>
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-linear-to-br from-teal-400 to-teal-600 flex items-center justify-center text-3xl font-bold shadow-lg">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-teal-400 to-teal-600 text-3xl font-bold shadow-lg">
                 {profile.avatar ? (
                   <Image
                     src={profile.avatar}
@@ -184,7 +164,7 @@ export default function ProfilePage() {
                   profile.name.charAt(0).toUpperCase()
                 )}
               </div>
-              <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white text-slate-700 flex items-center justify-center shadow-md hover:bg-slate-50">
+              <button className="absolute right-0 bottom-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-700 shadow-md hover:bg-slate-50">
                 <Edit2 className="h-4 w-4" />
               </button>
             </div>
@@ -193,7 +173,7 @@ export default function ProfilePage() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold">{profile.name}</h1>
               <p className="text-slate-300">{profile.email}</p>
-              <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-300">
+              <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-300">
                 {profile.occupation && (
                   <span className="flex items-center gap-1">
                     <Briefcase className="h-4 w-4" />
@@ -217,18 +197,18 @@ export default function ProfilePage() {
             <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 bg-white/5"
+                className="border-white/30 bg-white/5 text-white hover:bg-white/10"
                 onClick={startEditing}
               >
-                <Settings className="h-4 w-4 mr-2 shrink-0" />
+                <Settings className="mr-2 h-4 w-4 shrink-0" />
                 <span>Edit Profil</span>
               </Button>
               <Button
                 variant="outline"
-                className="border-red-400/40 text-red-200 hover:bg-red-500/20 hover:text-red-100 bg-red-500/10"
+                className="border-red-400/40 bg-red-500/10 text-red-200 hover:bg-red-500/20 hover:text-red-100"
                 onClick={logout}
               >
-                <LogOut className="h-4 w-4 mr-2 shrink-0" />
+                <LogOut className="mr-2 h-4 w-4 shrink-0" />
                 <span>Keluar</span>
               </Button>
             </div>
@@ -237,11 +217,11 @@ export default function ProfilePage() {
       </div>
 
       {/* Stats */}
-      <div className="container mx-auto px-4 -mt-6">
+      <div className="container mx-auto -mt-6 px-4">
         <div className="grid grid-cols-3 gap-4">
           <Card className="text-center">
             <CardContent className="py-4">
-              <BookOpen className="h-6 w-6 mx-auto text-teal-500 mb-2" />
+              <BookOpen className="mx-auto mb-2 h-6 w-6 text-teal-500" />
               <p className="text-2xl font-bold text-slate-900">
                 {profile.enrolledClasses.length}
               </p>
@@ -250,7 +230,7 @@ export default function ProfilePage() {
           </Card>
           <Card className="text-center">
             <CardContent className="py-4">
-              <Star className="h-6 w-6 mx-auto text-amber-500 mb-2" />
+              <Star className="mx-auto mb-2 h-6 w-6 text-amber-500" />
               <p className="text-2xl font-bold text-slate-900">
                 {profile.ratedClasses.length}
               </p>
@@ -259,7 +239,7 @@ export default function ProfilePage() {
           </Card>
           <Card className="text-center">
             <CardContent className="py-4">
-              <Award className="h-6 w-6 mx-auto text-blue-500 mb-2" />
+              <Award className="mx-auto mb-2 h-6 w-6 text-blue-500" />
               <p className="text-2xl font-bold text-slate-900">
                 {profile.certificates.length}
               </p>
@@ -272,7 +252,7 @@ export default function ProfilePage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-6 h-auto p-1">
+          <TabsList className="mb-6 grid h-auto w-full grid-cols-3 p-1">
             <TabsTrigger
               value="classes"
               className="gap-2 py-2.5 data-[state=active]:bg-teal-500 data-[state=active]:text-white"
@@ -307,8 +287,8 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 {profile.enrolledClasses.length === 0 ? (
-                  <div className="text-center py-8">
-                    <BookOpen className="h-12 w-12 mx-auto text-slate-300 mb-3" />
+                  <div className="py-8 text-center">
+                    <BookOpen className="mx-auto mb-3 h-12 w-12 text-slate-300" />
                     <p className="text-slate-500">
                       Anda belum mengikuti kelas apapun
                     </p>
@@ -323,21 +303,21 @@ export default function ProfilePage() {
                     {profile.enrolledClasses.map((cls) => (
                       <div
                         key={cls.id}
-                        className="flex flex-col gap-4 p-4 rounded-xl border border-slate-200 bg-white hover:shadow-md hover:border-slate-300 transition-all"
+                        className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 transition-all hover:border-slate-300 hover:shadow-md"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
                               {getTypeBadge(cls.type)}
                               {getStatusBadge(cls.status)}
                             </div>
-                            <h3 className="font-semibold text-slate-900 mb-1">
+                            <h3 className="mb-1 font-semibold text-slate-900">
                               {cls.title}
                             </h3>
                             <p className="text-sm text-slate-500">
                               {cls.instructor}
                             </p>
-                            <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                            <div className="mt-2 flex items-center gap-4 text-xs text-slate-400">
                               <span className="flex items-center gap-1.5">
                                 <Calendar className="h-3 w-3 shrink-0" />
                                 <span>
@@ -349,7 +329,7 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Progress and Action Row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-3 border-t border-slate-100">
+                        <div className="flex flex-col gap-4 border-t border-slate-100 pt-3 sm:flex-row sm:items-center">
                           <div className="flex-1 space-y-1.5">
                             <div className="flex items-center justify-between text-sm">
                               <span className="text-slate-500">Progress</span>
@@ -364,7 +344,7 @@ export default function ProfilePage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="w-full sm:w-auto gap-2 border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-300"
+                                className="w-full gap-2 border-green-200 bg-green-50 text-green-700 hover:border-green-300 hover:bg-green-100 sm:w-auto"
                               >
                                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                                 <span>Selesai</span>
@@ -372,7 +352,7 @@ export default function ProfilePage() {
                             ) : cls.status === "ongoing" ? (
                               <Button
                                 size="sm"
-                                className="w-full sm:w-auto gap-2 bg-teal-500 hover:bg-teal-600 text-white"
+                                className="w-full gap-2 bg-teal-500 text-white hover:bg-teal-600 sm:w-auto"
                               >
                                 <PlayCircle className="h-4 w-4 shrink-0" />
                                 <span>Lanjutkan</span>
@@ -381,7 +361,7 @@ export default function ProfilePage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="w-full sm:w-auto gap-2 border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 hover:border-amber-300"
+                                className="w-full gap-2 border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-300 hover:bg-amber-100 sm:w-auto"
                               >
                                 <Clock className="h-4 w-4 shrink-0" />
                                 <span>Menunggu</span>
@@ -408,8 +388,8 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 {profile.ratedClasses.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Star className="h-12 w-12 mx-auto text-slate-300 mb-3" />
+                  <div className="py-8 text-center">
+                    <Star className="mx-auto mb-3 h-12 w-12 text-slate-300" />
                     <p className="text-slate-500">
                       Anda belum memberikan rating apapun
                     </p>
@@ -419,11 +399,11 @@ export default function ProfilePage() {
                     {profile.ratedClasses.map((rated) => (
                       <div
                         key={rated.id}
-                        className="p-4 rounded-lg border bg-white"
+                        className="rounded-lg border bg-white p-4"
                       >
-                        <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
+                        <div className="mb-3 flex flex-wrap items-start justify-between gap-4">
                           <div>
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="mb-1 flex items-center gap-2">
                               {getTypeBadge(rated.type)}
                             </div>
                             <h3 className="font-semibold text-slate-900">
@@ -432,13 +412,13 @@ export default function ProfilePage() {
                           </div>
                           <div className="text-right">
                             {renderStars(rated.rating)}
-                            <p className="text-xs text-slate-400 mt-1">
+                            <p className="mt-1 text-xs text-slate-400">
                               {formatDate(rated.ratedAt)}
                             </p>
                           </div>
                         </div>
                         {rated.review && (
-                          <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                          <p className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
                             &ldquo;{rated.review}&rdquo;
                           </p>
                         )}
@@ -461,12 +441,12 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 {profile.certificates.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Award className="h-12 w-12 mx-auto text-slate-300 mb-3" />
+                  <div className="py-8 text-center">
+                    <Award className="mx-auto mb-3 h-12 w-12 text-slate-300" />
                     <p className="text-slate-500">
                       Anda belum memiliki sertifikat
                     </p>
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="mt-1 text-sm text-slate-400">
                       Selesaikan kelas untuk mendapatkan sertifikat
                     </p>
                   </div>
@@ -475,20 +455,20 @@ export default function ProfilePage() {
                     {profile.certificates.map((cert) => (
                       <div
                         key={cert.id}
-                        className="p-4 rounded-lg border bg-linear-to-br from-white to-slate-50 hover:shadow-md transition-shadow"
+                        className="rounded-lg border bg-linear-to-br from-white to-slate-50 p-4 transition-shadow hover:shadow-md"
                       >
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-linear-to-br from-teal-400 to-teal-600 flex items-center justify-center shrink-0">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-teal-400 to-teal-600">
                             <Award className="h-6 w-6 text-white" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 flex items-center gap-2">
                               {getTypeBadge(cert.classType)}
                             </div>
-                            <h3 className="font-semibold text-slate-900 truncate">
+                            <h3 className="truncate font-semibold text-slate-900">
                               {cert.classTitle}
                             </h3>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="mt-1 text-xs text-slate-500">
                               No: {cert.certificateNumber}
                             </p>
                             <p className="text-xs text-slate-400">
@@ -501,14 +481,14 @@ export default function ProfilePage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 gap-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
+                            className="flex-1 gap-2 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                           >
                             <Download className="h-4 w-4 shrink-0" />
                             <span>Unduh PDF</span>
                           </Button>
                           <Button
                             size="sm"
-                            className="flex-1 gap-2 bg-teal-500 hover:bg-teal-600 text-white"
+                            className="flex-1 gap-2 bg-teal-500 text-white hover:bg-teal-600"
                           >
                             <span>Lihat</span>
                             <ChevronRight className="h-4 w-4 shrink-0" />
@@ -543,7 +523,7 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="edit-name">Nama Lengkap</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="edit-name"
                     className="pl-10"
@@ -557,7 +537,7 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="edit-phone">Nomor Telepon</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Phone className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="edit-phone"
                     className="pl-10"
@@ -571,7 +551,7 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="edit-occupation">Pekerjaan</Label>
                 <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Briefcase className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="edit-occupation"
                     className="pl-10"
@@ -585,7 +565,7 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="edit-company">Perusahaan/Instansi</Label>
                 <div className="relative">
-                  <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Building className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="edit-company"
                     className="pl-10"
@@ -605,7 +585,7 @@ export default function ProfilePage() {
                   Batal
                 </Button>
                 <Button
-                  className="flex-1 bg-teal-500 hover:bg-teal-600 text-white gap-2"
+                  className="flex-1 gap-2 bg-teal-500 text-white hover:bg-teal-600"
                   onClick={() => setIsEditing(false)}
                 >
                   <Save className="h-4 w-4 shrink-0" />
