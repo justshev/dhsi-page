@@ -22,12 +22,17 @@ import {
   AlertCircle,
   User,
   Phone,
-  CheckCircle2,
 } from "lucide-react";
 import useRegister from "@/hooks/auth/use-register";
 
 export default function RegisterPage() {
-  const { formik, showPassword, toggleShowPassword } = useRegister();
+  const {
+    formik,
+    showPassword,
+    toggleShowPassword,
+    isLoading,
+    registerIsDisabled,
+  } = useRegister();
 
   const hasFormError =
     formik.submitCount > 0 && Object.keys(formik.errors).length > 0;
@@ -81,10 +86,10 @@ export default function RegisterPage() {
                   <div className="relative">
                     <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <Input
-                      name="name"
+                      name="username"
                       placeholder="Nama lengkap"
                       className="pl-10"
-                      value={formik.values.name}
+                      value={formik.values.username}
                       onChange={formik.handleChange}
                     />
                   </div>
@@ -148,7 +153,7 @@ export default function RegisterPage() {
                 {/* Submit */}
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={registerIsDisabled}
                   className="w-full bg-teal-500 hover:bg-teal-600"
                 >
                   {isLoading ? (

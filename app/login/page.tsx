@@ -24,7 +24,7 @@ import {
 import useLogin from "@/hooks/auth/use-login";
 
 export default function LoginPage() {
-  const { formik, showPassword, toggleShowPassword } = useLogin();
+  const { formik, showPassword, toggleShowPassword, isLoading } = useLogin();
   return (
     <div className="flex min-h-screen flex-col bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
@@ -126,7 +126,7 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   className="w-full bg-teal-500 hover:bg-teal-600"
-                  disabled={formik.isSubmitting}
+                  disabled={formik.isSubmitting || isLoading}
                 >
                   {formik.isSubmitting ? (
                     <>

@@ -16,10 +16,16 @@ export const metadata: Metadata = {
   title: "DHSI - Dewan Hukum Siber Indonesia",
   description:
     "Platform pelatihan dan edukasi hukum digital, keamanan siber, dan perlindungan data",
+  icons: {
+    icon: "/logo.webp", // favicon utama
+    shortcut: "/logo.webp",
+    apple: "/logo.webp", // untuk iOS home screen
+  },
 };
 
 import TanstackProvider from "@/lib/tanstack-provider";
 import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{

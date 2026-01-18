@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/error";
 import { registerRequest } from "@/services/auth/register";
 import { RegisterUserPayload } from "@/types/types";
+import { registerSchema } from "@/features/schema/auth.schema";
 
 const useRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +20,6 @@ const useRegister = () => {
     },
     onError: (error) => {
       const message = getErrorMessage(error, "Registrasi gagal");
-
       toast.error(message);
     },
   });
@@ -30,20 +30,23 @@ const useRegister = () => {
       email: "",
       password: "",
       phone: "",
-      confirmPassword: "",
     } as RegisterUserPayload,
     onSubmit: (values) => {
       mutate(values);
     },
+    validationSchema: registerSchema,
+    validateOnMount: true,
   });
 
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
+  const registerIsDisabled = !formik.isValid || isPending || !formik.dirty;
 
   return {
     formik,
     toggleShowPassword,
     showPassword,
     isLoading: isPending,
+    registerIsDisabled,
   };
 };
 

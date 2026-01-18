@@ -25,8 +25,6 @@ export async function loginRequest(
     payload,
   );
 
-  
-
   return data;
 }
 
