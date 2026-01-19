@@ -79,7 +79,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
   const [saving, setSaving] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
@@ -105,7 +105,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
   const handleArrayItemChange = (
     field: "syllabus" | "requirements" | "benefits",
     index: number,
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -122,7 +122,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
 
   const removeArrayItem = (
     field: "syllabus" | "requirements" | "benefits",
-    index: number
+    index: number,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -415,7 +415,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                   name="avatar"
                   value={formData.instructor.avatar}
                   onChange={handleInstructorChange}
-                  placeholder="/avatars/instructor-1.jpg"
+                  placeholder="https://placehold.co/200x200/6b7280/ffffff?text=Instructor"
                 />
               </div>
             </CardContent>
@@ -467,7 +467,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
             <CardContent className="space-y-3">
               {formData.syllabus.map((item, index) => (
                 <div key={index} className="flex gap-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary shrink-0">
+                  <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold">
                     {index + 1}
                   </div>
                   <Input
@@ -482,7 +482,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       onClick={() => removeArrayItem("syllabus", index)}
                     >
                       <X className="h-4 w-4" />
@@ -519,7 +519,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                       handleArrayItemChange(
                         "requirements",
                         index,
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     placeholder={`Persyaratan ${index + 1}`}
@@ -529,7 +529,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       onClick={() => removeArrayItem("requirements", index)}
                     >
                       <X className="h-4 w-4" />
@@ -572,7 +572,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       onClick={() => removeArrayItem("benefits", index)}
                     >
                       <X className="h-4 w-4" />
@@ -604,8 +604,8 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               {saving
                 ? "Menyimpan..."
                 : isEdit
-                ? "Simpan Perubahan"
-                : "Buat Program"}
+                  ? "Simpan Perubahan"
+                  : "Buat Program"}
             </Button>
           </div>
         </form>
