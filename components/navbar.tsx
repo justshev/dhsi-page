@@ -103,25 +103,22 @@ export default function Navbar() {
                           {user.email}
                         </p>
                       </div>
-                      {/* 
-                      {user.role === "admin" && (
-                        <Link
-                          href="/dashboard"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          <LayoutDashboard className="h-4 w-4" />
-                          Dashboard Admin
-                        </Link>
-                      )} */}
-
                       <Link
-                        href="/profile"
+                        href={user.role === "admin" ? "/dashboard" : "/profile"}
                         className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <User className="h-4 w-4" />
-                        Profil Saya
+                        {user.role === "admin" ? (
+                          <>
+                            <LayoutDashboard className="h-4 w-4" />
+                            Dashboard Admin
+                          </>
+                        ) : (
+                          <>
+                            <User className="h-4 w-4" />
+                            Profil Saya
+                          </>
+                        )}
                       </Link>
 
                       <Link
@@ -210,24 +207,22 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* {user.role === "admin" && (
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center gap-2 px-2 py-2 text-slate-700"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Dashboard Admin
-                  </Link>
-                )} */}
-
                 <Link
-                  href="/profile"
+                  href={user.role === "admin" ? "/dashboard" : "/profile"}
                   className="flex items-center gap-2 px-2 py-2 text-slate-700"
                   onClick={() => setIsOpen(false)}
                 >
-                  <User className="h-4 w-4" />
-                  Profil Saya
+                  {user.role === "admin" ? (
+                    <>
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard Admin
+                    </>
+                  ) : (
+                    <>
+                      <User className="h-4 w-4" />
+                      Profil Saya
+                    </>
+                  )}
                 </Link>
 
                 <Link

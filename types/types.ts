@@ -23,6 +23,7 @@ export type MyResponse = {
   id: string;
   username: string;
   email: string;
+  role: "admin" | "user";
 };
 
 export type CreateCoursePayload = {

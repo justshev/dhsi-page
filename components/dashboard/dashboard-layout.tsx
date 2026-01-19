@@ -20,7 +20,10 @@ import {
   X,
   Calendar,
   Presentation,
+  Loader2,
 } from "lucide-react";
+import useGetUser from "@/hooks/auth/use-get-user";
+import AccessDenied from "@/components/access-denied";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -63,6 +66,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { data: user, isLoading } = useGetUser();
 
   const isActive = (href: string) => {
     if (href === "/dashboard") {
@@ -70,6 +74,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
     return pathname.startsWith(href);
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-500" />
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!user || user.role !== "admin") {
+    return <AccessDenied />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -84,9 +102,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-slate-200 transition-all duration-300",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white transition-all duration-300",
           collapsed ? "w-16" : "w-64",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         {/* Logo */}
@@ -127,7 +145,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 isActive(item.href)
                   ? "bg-slate-100 text-slate-900"
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
-                collapsed && "justify-center px-2"
+                collapsed && "justify-center px-2",
               )}
               title={collapsed ? item.name : undefined}
             >
@@ -161,20 +179,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div
             className={cn(
               "flex items-center gap-3 rounded-lg p-2",
-              collapsed && "justify-center"
+              collapsed && "justify-center",
             )}
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-medium text-slate-700">
-              AD
+              {user.username?.slice(0, 2).toUpperCase() || "AD"}
             </div>
             {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 truncate">
-                  Admin User
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-slate-900">
+                  {user.username}
                 </p>
-                <p className="text-xs text-slate-500 truncate">
-                  admin@hukumid.com
-                </p>
+                <p className="truncate text-xs text-slate-500">{user.email}</p>
               </div>
             )}
             {!collapsed && (
@@ -190,7 +206,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div
         className={cn(
           "min-h-screen transition-all duration-300",
-          collapsed ? "lg:pl-16" : "lg:pl-64"
+          collapsed ? "lg:pl-16" : "lg:pl-64",
         )}
       >
         {/* Top Bar */}
@@ -207,12 +223,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="text-slate-500 hover:text-slate-900 transition-colors"
+                className="text-slate-500 transition-colors hover:text-slate-900"
               >
                 <Home className="h-4 w-4" />
               </Link>
               <span className="text-slate-300">/</span>
-              <span className="text-slate-900 font-medium">Dashboard</span>
+              <span className="font-medium text-slate-900">Dashboard</span>
             </nav>
           </div>
         </header>
