@@ -1,12 +1,10 @@
-import { CourseList } from "@/components/dashboard/course-list"
-import { courses } from "@/lib/courses-data"
+import ComingSoon from "@/components/coming-soon";
 
 export default function CoursesPage() {
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        <CourseList courses={courses} />
-      </div>
-    </div>
-  )
+    <ComingSoon
+      title="Manajemen Kursus"
+      description="Fitur manajemen kursus sedang dalam pengembangan. Anda akan dapat membuat dan mengelola kursus di sini."
+    />
+  );
 }
