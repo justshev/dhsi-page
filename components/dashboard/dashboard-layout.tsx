@@ -20,44 +20,47 @@ import {
   X,
   Calendar,
   Presentation,
+  FileQuestion,
+  MessageCircle,
+  Award,
+  Video,
+  CreditCard,
+  BarChart3,
+  User,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Manajemen Kursus",
-    href: "/dashboard/courses",
-    icon: BookOpen,
-  },
-  {
-    name: "Pelatihan & Workshop",
-    href: "/dashboard/training",
-    icon: Presentation,
-  },
-  {
-    name: "Manajemen Member",
-    href: "/dashboard/members",
-    icon: Crown,
-  },
-  {
-    name: "Peserta",
-    href: "/dashboard/students",
-    icon: Users,
-  },
-  {
-    name: "Pengaturan",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
+// Menu untuk Member
+const memberNavigation = [
+  { name: "Beranda", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Membership", href: "/dashboard/membership", icon: CreditCard },
+  { name: "Pelatihan Saya", href: "/dashboard/trainings", icon: BookOpen },
+  { name: "Live Class", href: "/dashboard/live-class", icon: Video },
+  { name: "Ujian", href: "/dashboard/exams", icon: FileQuestion },
+  { name: "Diskusi", href: "/dashboard/discussions", icon: MessageCircle },
+  { name: "Sertifikat", href: "/dashboard/certificates", icon: Award },
+  { name: "Profil", href: "/dashboard/profile", icon: User },
 ];
+
+// Menu untuk Admin
+const adminNavigation = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Users", href: "/dashboard/users", icon: Users },
+  { name: "Membership", href: "/dashboard/membership-admin", icon: CreditCard },
+  { name: "Pelatihan & Workshop", href: "/dashboard/training", icon: Presentation },
+  { name: "Live Sessions", href: "/dashboard/sessions", icon: Calendar },
+  { name: "Zoom Manager", href: "/dashboard/zoom", icon: Video },
+  { name: "Ujian", href: "/dashboard/exams-admin", icon: FileQuestion },
+  { name: "Bank Soal", href: "/dashboard/questions", icon: Crown },
+  { name: "Laporan", href: "/dashboard/reports", icon: BarChart3 },
+  { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
+];
+
+// Gunakan admin navigation untuk dashboard (bisa disesuaikan berdasarkan role)
+const navigation = adminNavigation;
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -84,9 +87,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-slate-200 transition-all duration-300",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white transition-all duration-300",
           collapsed ? "w-16" : "w-64",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         {/* Logo */}
@@ -127,7 +130,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 isActive(item.href)
                   ? "bg-slate-100 text-slate-900"
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
-                collapsed && "justify-center px-2"
+                collapsed && "justify-center px-2",
               )}
               title={collapsed ? item.name : undefined}
             >
@@ -161,18 +164,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div
             className={cn(
               "flex items-center gap-3 rounded-lg p-2",
-              collapsed && "justify-center"
+              collapsed && "justify-center",
             )}
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-medium text-slate-700">
               AD
             </div>
             {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 truncate">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-slate-900">
                   Admin User
                 </p>
-                <p className="text-xs text-slate-500 truncate">
+                <p className="truncate text-xs text-slate-500">
                   admin@hukumid.com
                 </p>
               </div>
@@ -190,7 +193,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div
         className={cn(
           "min-h-screen transition-all duration-300",
-          collapsed ? "lg:pl-16" : "lg:pl-64"
+          collapsed ? "lg:pl-16" : "lg:pl-64",
         )}
       >
         {/* Top Bar */}
@@ -207,12 +210,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="text-slate-500 hover:text-slate-900 transition-colors"
+                className="text-slate-500 transition-colors hover:text-slate-900"
               >
                 <Home className="h-4 w-4" />
               </Link>
               <span className="text-slate-300">/</span>
-              <span className="text-slate-900 font-medium">Dashboard</span>
+              <span className="font-medium text-slate-900">Dashboard</span>
             </nav>
           </div>
         </header>
