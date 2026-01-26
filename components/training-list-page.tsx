@@ -76,7 +76,7 @@ export default function TrainingListPage() {
     return trainings.filter((t) => {
       const matchesSearch =
         t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.shortDescription.toLowerCase().includes(searchQuery.toLowerCase());
+        t.short_description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory =
         selectedCategory === "all" || t.category === selectedCategory;
       const matchesLevel = selectedLevel === "all" || t.level === selectedLevel;
@@ -254,12 +254,12 @@ function TrainingGrid({ trainings }: { trainings: TrainingSession[] }) {
                 variant="outline"
                 className="bg-background/80 backdrop-blur-sm gap-1"
               >
-                {training.isOnline ? (
+                {training.is_online ? (
                   <Video size={10} />
                 ) : (
                   <Building2 size={10} />
                 )}
-                {training.isOnline ? "Online" : "Offline"}
+                {training.is_online ? "Online" : "Offline"}
               </Badge>
             </div>
           </div>
@@ -275,7 +275,7 @@ function TrainingGrid({ trainings }: { trainings: TrainingSession[] }) {
               {training.title}
             </CardTitle>
             <CardDescription className="line-clamp-2">
-              {training.shortDescription}
+              {training.short_description}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -310,7 +310,7 @@ function TrainingGrid({ trainings }: { trainings: TrainingSession[] }) {
               <div className="flex items-center gap-2">
                 <MapPin size={14} />
                 <span className="truncate">
-                  {training.isOnline ? "Online" : training.location}
+                  {training.is_online ? "Online" : training.location}
                 </span>
               </div>
             </div>
@@ -331,7 +331,7 @@ function TrainingGrid({ trainings }: { trainings: TrainingSession[] }) {
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Users size={14} />
                   <span>
-                    {training.enrolledParticipants}/{training.maxParticipants}
+                    {training.enrolled_participants}/{training.max_participants}
                   </span>
                 </div>
               </div>

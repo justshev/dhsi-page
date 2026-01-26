@@ -83,7 +83,7 @@ export default function LatestTrainingSection() {
                   {training.title}
                 </CardTitle>
                 <CardDescription className="line-clamp-2">
-                  {training.shortDescription}
+                  {training.short_description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -118,7 +118,7 @@ export default function LatestTrainingSection() {
                   <div className="flex items-center gap-2">
                     <MapPin size={14} />
                     <span className="truncate">
-                      {training.isOnline ? "Online" : training.location}
+                      {training.is_online ? "Online" : training.location}
                     </span>
                   </div>
                 </div>
@@ -139,8 +139,8 @@ export default function LatestTrainingSection() {
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Users size={14} />
                       <span>
-                        {training.enrolledParticipants}/
-                        {training.maxParticipants}
+                        {training.enrolled_participants}/
+                        {training.max_participants}
                       </span>
                     </div>
                   </div>

@@ -92,12 +92,12 @@ export default function TrainingDetail({ training }: TrainingDetailProps) {
                 <Badge variant="secondary">{training.category}</Badge>
                 <Badge variant="outline">{training.level}</Badge>
                 <Badge variant="outline" className="gap-1">
-                  {training.isOnline ? (
+                  {training.is_online ? (
                     <Video size={12} />
                   ) : (
                     <Building2 size={12} />
                   )}
-                  {training.isOnline ? "Online" : "Offline"}
+                  {training.is_online ? "Online" : "Offline"}
                 </Badge>
               </div>
 
@@ -106,7 +106,7 @@ export default function TrainingDetail({ training }: TrainingDetailProps) {
               </h1>
 
               <p className="text-lg text-muted-foreground leading-relaxed">
-                {training.fullDescription}
+                {training.full_description}
               </p>
 
               {/* Instructor Info */}
@@ -155,7 +155,7 @@ export default function TrainingDetail({ training }: TrainingDetailProps) {
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Users size={18} />
                     <span>
-                      {training.enrolledParticipants} peserta terdaftar
+                      {training.enrolled_participants} peserta terdaftar
                     </span>
                   </div>
                 </div>
@@ -187,8 +187,8 @@ export default function TrainingDetail({ training }: TrainingDetailProps) {
                         Kuota Peserta
                       </span>
                       <span className="font-medium">
-                        {training.enrolledParticipants}/
-                        {training.maxParticipants}
+                        {training.enrolled_participants}/
+                        {training.max_participants}
                       </span>
                     </div>
                     <Progress value={participantProgress} className="h-2" />
@@ -209,9 +209,9 @@ export default function TrainingDetail({ training }: TrainingDetailProps) {
                         <p className="font-medium">
                           {formatDate(training.date)}
                         </p>
-                        {training.endDate && (
+                        {training.end_date && (
                           <p className="font-medium">
-                            s/d {formatDate(training.endDate)}
+                            s/d {formatDate(training.end_date)}
                           </p>
                         )}
                       </div>

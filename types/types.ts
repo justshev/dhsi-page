@@ -23,6 +23,7 @@ export type MyResponse = {
   id: string;
   username: string;
   email: string;
+  role: "admin" | "user";
 };
 
 export type CreateCoursePayload = {
@@ -31,7 +32,8 @@ export type CreateCoursePayload = {
   description: string;
   category: string;
   level: string;
-  duration: string;
+  // duration: string;
   thumbnail: null | File;
   author: string;
+  price: string;
 };

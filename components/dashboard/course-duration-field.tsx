@@ -1,0 +1,38 @@
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Clock } from "lucide-react";
+import { formatPrice } from "@/utils/format-price";
+
+export interface PriceFieldProps {
+  value: string;
+  error?: string;
+  onChange: (value: string) => void;
+}
+
+export default function PriceField({
+  value,
+  error,
+  onChange,
+}: PriceFieldProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor="price">
+        Harga Pelatihan <span className="text-red-500">*</span>
+      </Label>
+      <div className="relative">
+        <Clock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Input
+          name="price"
+          id="price"
+          placeholder="Contoh: 100000"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={`pl-9 ${error ? "border-red-500" : ""}`}
+          type="number"
+        />
+      </div>
+      <p className="text-sm">{formatPrice(Number(value))}</p>
+      {error && <p className="text-sm text-red-500">{error}</p>}
+    </div>
+  );
+}

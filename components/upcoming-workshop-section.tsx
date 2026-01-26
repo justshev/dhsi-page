@@ -71,22 +71,22 @@ export default function UpcomingWorkshopSection() {
                       <Badge variant="secondary">{workshop.category}</Badge>
                       <Badge variant="outline">{workshop.level}</Badge>
                       <Badge
-                        variant={workshop.isOnline ? "default" : "outline"}
+                        variant={workshop.is_online ? "default" : "outline"}
                         className="gap-1"
                       >
-                        {workshop.isOnline ? (
+                        {workshop.is_online ? (
                           <Video size={12} />
                         ) : (
                           <Building2 size={12} />
                         )}
-                        {workshop.isOnline ? "Online" : "Offline"}
+                        {workshop.is_online ? "Online" : "Offline"}
                       </Badge>
                     </div>
                     <CardTitle className="text-xl lg:text-2xl">
                       {workshop.title}
                     </CardTitle>
                     <CardDescription className="text-base">
-                      {workshop.shortDescription}
+                      {workshop.short_description}
                     </CardDescription>
                   </CardHeader>
 
@@ -139,8 +139,8 @@ export default function UpcomingWorkshopSection() {
                               Peserta
                             </p>
                             <p className="font-medium">
-                              {workshop.enrolledParticipants}/
-                              {workshop.maxParticipants} terdaftar
+                              {workshop.enrolled_participants}/
+                              {workshop.max_participants} terdaftar
                             </p>
                           </div>
                         </div>

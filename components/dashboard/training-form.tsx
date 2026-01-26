@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -13,9 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   TrainingSession,
   TrainingType,
@@ -39,120 +42,74 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import useTrainingForm from "@/hooks/training/use-training-form";
+import BenefitSection from "./benefit-section";
+
 interface TrainingFormProps {
   training?: TrainingSession;
   mode: "create" | "edit";
+}
+
+interface SimpleOption {
+  value: string;
+  label: string;
+}
+
+interface TrainingSelectProps {
+  value: string;
+  onChange: (value: string) => void;
+  options: SimpleOption[];
+  placeholder: string;
+}
+
+function TrainingSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: TrainingSelectProps) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
 }
 
 export function TrainingForm({ training, mode }: TrainingFormProps) {
   const router = useRouter();
   const isEdit = mode === "edit";
 
-  // Form state
-  const [formData, setFormData] = useState({
-    title: training?.title || "",
-    shortDescription: training?.shortDescription || "",
-    fullDescription: training?.fullDescription || "",
-    type: training?.type || ("pelatihan" as TrainingType),
-    status: training?.status || ("upcoming" as TrainingStatus),
-    category: training?.category || "",
-    level: training?.level || "Beginner",
-    date: training?.date || "",
-    endDate: training?.endDate || "",
-    time: training?.time || "",
-    duration: training?.duration || "",
-    location: training?.location || "",
-    isOnline: training?.isOnline || false,
-    maxParticipants: training?.maxParticipants || 30,
-    price: training?.price || "",
-    thumbnail: training?.thumbnail || "",
-    instructor: {
-      name: training?.instructor.name || "",
-      title: training?.instructor.title || "",
-      avatar: training?.instructor.avatar || "",
-    },
-    syllabus: training?.syllabus || [""],
-    requirements: training?.requirements || [""],
-    benefits: training?.benefits || [""],
-  });
+  const {
+    formik,
+    isSubmitting,
+    handleSelectChange,
+    updateArrayField,
+    addArrayItem,
+    removeArrayItem,
+  } = useTrainingForm({ mode, training });
 
-  const [saving, setSaving] = useState(false);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      const checked = (e.target as HTMLInputElement).checked;
-      setFormData((prev) => ({ ...prev, [name]: checked }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleInstructorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      instructor: { ...prev.instructor, [name]: value },
-    }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleArrayItemChange = (
-    field: "syllabus" | "requirements" | "benefits",
-    index: number,
-    value: string
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].map((item, i) => (i === index ? value : item)),
-    }));
-  };
-
-  const addArrayItem = (field: "syllabus" | "requirements" | "benefits") => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: [...prev[field], ""],
-    }));
-  };
-
-  const removeArrayItem = (
-    field: "syllabus" | "requirements" | "benefits",
-    index: number
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    console.log("Form data:", formData);
-    setSaving(false);
-    router.push("/dashboard/training");
-  };
+  const { values, handleChange, handleSubmit } = formik;
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
+        <Link href="/dashboard/training">
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Kembali
+          </Button>
+        </Link>
         <div className="mb-6 flex items-center gap-4">
-          <Link href="/dashboard/training">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Kembali
-            </Button>
-          </Link>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
               {isEdit
@@ -177,48 +134,25 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="type">Tipe Program *</Label>
-                  <Select
-                    value={formData.type}
-                    onValueChange={(value) => handleSelectChange("type", value)}
-                    options={trainingTypeOptions}
-                    placeholder="Pilih tipe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status *</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) =>
-                      handleSelectChange("status", value)
-                    }
-                    options={trainingStatusOptions}
-                    placeholder="Pilih status"
-                  />
-                </div>
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="title">Judul Program *</Label>
                 <Input
                   id="title"
                   name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
+                  value={values.title}
+                  onChange={handleChange}
                   placeholder="Contoh: Certified Cyber Law Practitioner (CCLP)"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="shortDescription">Deskripsi Singkat *</Label>
+                <Label htmlFor="short_description">Deskripsi Singkat *</Label>
                 <Textarea
-                  id="shortDescription"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleInputChange}
+                  id="short_description"
+                  name="short_description"
+                  value={values.short_description}
+                  onChange={handleChange}
                   placeholder="Deskripsi singkat untuk ditampilkan di card..."
                   rows={2}
                   required
@@ -226,12 +160,12 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fullDescription">Deskripsi Lengkap</Label>
+                <Label htmlFor="full_description">Deskripsi Lengkap</Label>
                 <Textarea
-                  id="fullDescription"
-                  name="fullDescription"
-                  value={formData.fullDescription}
-                  onChange={handleInputChange}
+                  id="full_description"
+                  name="full_description"
+                  value={values.full_description}
+                  onChange={handleChange}
                   placeholder="Deskripsi lengkap tentang program ini..."
                   rows={4}
                 />
@@ -240,22 +174,18 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="category">Kategori *</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) =>
-                      handleSelectChange("category", value)
-                    }
+                  <TrainingSelect
+                    value={values.category}
+                    onChange={(value) => handleSelectChange("category", value)}
                     options={trainingCategoryOptions}
                     placeholder="Pilih kategori"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="level">Level *</Label>
-                  <Select
-                    value={formData.level}
-                    onValueChange={(value) =>
-                      handleSelectChange("level", value)
-                    }
+                  <TrainingSelect
+                    value={values.level}
+                    onChange={(value) => handleSelectChange("level", value)}
                     options={trainingLevelOptions}
                     placeholder="Pilih level"
                   />
@@ -268,8 +198,8 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                   <Input
                     id="thumbnail"
                     name="thumbnail"
-                    value={formData.thumbnail}
-                    onChange={handleInputChange}
+                    value={values.thumbnail}
+                    onChange={handleChange}
                     placeholder="/training/nama-gambar.jpg"
                   />
                   <Button type="button" variant="outline" size="icon">
@@ -279,9 +209,38 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </div>
             </CardContent>
           </Card>
-
           {/* Schedule & Location */}
-          <Card>
+
+          <BenefitSection
+            values={{ benefits: values.benefits }}
+            addArrayItem={addArrayItem}
+            removeArrayItem={removeArrayItem}
+            updateArrayField={updateArrayField}
+          />
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-4">
+            <Link href="/dashboard/training">
+              <Button type="button" variant="outline">
+                Batal
+              </Button>
+            </Link>
+            <Button type="submit" disabled={isSubmitting} className="gap-2">
+              <Save className="h-4 w-4" />
+              {isSubmitting
+                ? "Menyimpan..."
+                : isEdit
+                  ? "Simpan Perubahan"
+                  : "Buat Program"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+/**
+ *           {/* <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
@@ -299,8 +258,8 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                     id="date"
                     name="date"
                     type="date"
-                    value={formData.date}
-                    onChange={handleInputChange}
+                    value={values.date}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -310,69 +269,101 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                     id="endDate"
                     name="endDate"
                     type="date"
-                    value={formData.endDate}
-                    onChange={handleInputChange}
+                    value={values.endDate}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="time">Waktu *</Label>
+                  <Label htmlFor="time">Waktu Mulai*</Label>
                   <Input
                     id="time"
                     name="time"
-                    value={formData.time}
-                    onChange={handleInputChange}
+                    type="time"
+                    value={values.time}
+                    onChange={handleChange}
                     placeholder="09:00 - 16:00 WIB"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="duration">Durasi *</Label>
+                  <Label htmlFor="end_time">Waktu Selesai*</Label>
                   <Input
-                    id="duration"
-                    name="duration"
-                    value={formData.duration}
-                    onChange={handleInputChange}
+                    id="end_time"
+                    name="end_time"
+                    value={values.end_time}
+                    type="time"
+                    onChange={handleChange}
                     placeholder="Contoh: 3 hari (24 jam)"
                     required
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="isOnline"
-                    checked={formData.isOnline}
-                    onChange={handleInputChange}
-                    className="h-4 w-4 rounded border-gray-300"
-                  />
-                  <span className="text-sm">Program Online</span>
-                </label>
-              </div>
-
               <div className="space-y-2">
-                <Label htmlFor="location">Lokasi *</Label>
+                <Label htmlFor="location">Link Zoom *</Label>
                 <Input
                   id="location"
                   name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder={
-                    formData.isOnline
-                      ? "Online via Zoom"
-                      : "Nama Hotel / Lokasi"
-                  }
+                  value={values.location}
+                  onChange={handleChange}
+                  placeholder={"https://zoom.us/j/xxxxxx"}
                   required
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Instructor */}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Link & Komunikasi</CardTitle>
+              <CardDescription>
+                Informasi pendukung seperti link Zoom dan grup WhatsApp
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="zoomLink">Link Zoom (opsional)</Label>
+                <Input
+                  id="zoomLink"
+                  name="zoomLink"
+                  value={values.zoomLink || ""}
+                  onChange={handleChange}
+                  placeholder="https://zoom.us/j/xxxxxx"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="whatsappLink">
+                  Link Grup WhatsApp (opsional)
+                </Label>
+                <Input
+                  id="whatsappLink"
+                  name="whatsappLink"
+                  value={values.whatsappLink || ""}
+                  onChange={handleChange}
+                  placeholder="https://chat.whatsapp.com/xxxxxx"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="discussionSchedule">
+                  Jadwal Diskusi (opsional)
+                </Label>
+                <Input
+                  id="discussionSchedule"
+                  name="discussionSchedule"
+                  value={values.discussionSchedule || ""}
+                  onChange={handleChange}
+                  placeholder="Contoh: Setiap Rabu, 19.00 WIB"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -388,9 +379,9 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                 <Label htmlFor="instructorName">Nama Instruktur *</Label>
                 <Input
                   id="instructorName"
-                  name="name"
-                  value={formData.instructor.name}
-                  onChange={handleInstructorChange}
+                  name="instructor.name"
+                  value={values.instructor.name}
+                  onChange={handleChange}
                   placeholder="Prof. Dr. Nama Lengkap, S.H., M.H."
                   required
                 />
@@ -400,9 +391,9 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                 <Label htmlFor="instructorTitle">Jabatan / Keahlian *</Label>
                 <Input
                   id="instructorTitle"
-                  name="title"
-                  value={formData.instructor.title}
-                  onChange={handleInstructorChange}
+                  name="instructor.title"
+                  value={values.instructor.title}
+                  onChange={handleChange}
                   placeholder="Guru Besar Hukum Siber & Pakar Digital Forensik"
                   required
                 />
@@ -412,16 +403,15 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                 <Label htmlFor="instructorAvatar">URL Foto Instruktur</Label>
                 <Input
                   id="instructorAvatar"
-                  name="avatar"
-                  value={formData.instructor.avatar}
-                  onChange={handleInstructorChange}
-                  placeholder="/avatars/instructor-1.jpg"
+                  name="instructor.avatar"
+                  value={values.instructor.avatar}
+                  onChange={handleChange}
+                  placeholder="https://placehold.co/200x200/6b7280/ffffff?text=Instructor"
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Pricing & Capacity */}
           <Card>
             <CardHeader>
               <CardTitle>Harga & Kapasitas</CardTitle>
@@ -434,8 +424,8 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                   <Input
                     id="price"
                     name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
+                    value={values.price}
+                    onChange={handleChange}
                     placeholder="Rp 5.000.000"
                     required
                   />
@@ -446,8 +436,8 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
                     id="maxParticipants"
                     name="maxParticipants"
                     type="number"
-                    value={formData.maxParticipants}
-                    onChange={handleInputChange}
+                    value={values.maxParticipants}
+                    onChange={handleChange}
                     min={1}
                     required
                   />
@@ -456,7 +446,7 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
             </CardContent>
           </Card>
 
-          {/* Syllabus */}
+          
           <Card>
             <CardHeader>
               <CardTitle>Materi / Silabus</CardTitle>
@@ -465,24 +455,24 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {formData.syllabus.map((item, index) => (
+              {values.syllabus.map((item, index) => (
                 <div key={index} className="flex gap-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary shrink-0">
+                  <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold">
                     {index + 1}
                   </div>
                   <Input
                     value={item}
                     onChange={(e) =>
-                      handleArrayItemChange("syllabus", index, e.target.value)
+                      updateArrayField("syllabus", index, e.target.value)
                     }
                     placeholder={`Materi ${index + 1}`}
                   />
-                  {formData.syllabus.length > 1 && (
+                  {values.syllabus.length > 1 && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       onClick={() => removeArrayItem("syllabus", index)}
                     >
                       <X className="h-4 w-4" />
@@ -501,8 +491,6 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </Button>
             </CardContent>
           </Card>
-
-          {/* Requirements */}
           <Card>
             <CardHeader>
               <CardTitle>Persyaratan Peserta</CardTitle>
@@ -511,25 +499,21 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {formData.requirements.map((item, index) => (
+              {values.requirements.map((item, index) => (
                 <div key={index} className="flex gap-2">
                   <Input
                     value={item}
                     onChange={(e) =>
-                      handleArrayItemChange(
-                        "requirements",
-                        index,
-                        e.target.value
-                      )
+                      updateArrayField("requirements", index, e.target.value)
                     }
                     placeholder={`Persyaratan ${index + 1}`}
                   />
-                  {formData.requirements.length > 1 && (
+                  {values.requirements.length > 1 && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       onClick={() => removeArrayItem("requirements", index)}
                     >
                       <X className="h-4 w-4" />
@@ -548,68 +532,4 @@ export function TrainingForm({ training, mode }: TrainingFormProps) {
               </Button>
             </CardContent>
           </Card>
-
-          {/* Benefits */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Manfaat / Benefit</CardTitle>
-              <CardDescription>
-                Yang akan didapatkan peserta setelah mengikuti program
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {formData.benefits.map((item, index) => (
-                <div key={index} className="flex gap-2">
-                  <Input
-                    value={item}
-                    onChange={(e) =>
-                      handleArrayItemChange("benefits", index, e.target.value)
-                    }
-                    placeholder={`Benefit ${index + 1}`}
-                  />
-                  {formData.benefits.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => removeArrayItem("benefits", index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full gap-2"
-                onClick={() => addArrayItem("benefits")}
-              >
-                <Plus className="h-4 w-4" />
-                Tambah Benefit
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-4">
-            <Link href="/dashboard/training">
-              <Button type="button" variant="outline">
-                Batal
-              </Button>
-            </Link>
-            <Button type="submit" disabled={saving} className="gap-2">
-              <Save className="h-4 w-4" />
-              {saving
-                ? "Menyimpan..."
-                : isEdit
-                ? "Simpan Perubahan"
-                : "Buat Program"}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
+*/

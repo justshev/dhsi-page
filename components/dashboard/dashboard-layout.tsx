@@ -20,14 +20,17 @@ import {
   X,
   Calendar,
   Presentation,
+  Loader2,
+  CreditCard,
+  Video,
   FileQuestion,
   MessageCircle,
   Award,
-  Video,
-  CreditCard,
-  BarChart3,
   User,
+  BarChart3,
 } from "lucide-react";
+import useGetUser from "@/hooks/auth/use-get-user";
+import AccessDenied from "@/components/access-denied";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -50,7 +53,11 @@ const adminNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Users", href: "/dashboard/users", icon: Users },
   { name: "Membership", href: "/dashboard/membership-admin", icon: CreditCard },
-  { name: "Pelatihan & Workshop", href: "/dashboard/training", icon: Presentation },
+  {
+    name: "Pelatihan & Workshop",
+    href: "/dashboard/training",
+    icon: Presentation,
+  },
   { name: "Live Sessions", href: "/dashboard/sessions", icon: Calendar },
   { name: "Zoom Manager", href: "/dashboard/zoom", icon: Video },
   { name: "Ujian", href: "/dashboard/exams-admin", icon: FileQuestion },
@@ -66,6 +73,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { data: user, isLoading } = useGetUser();
 
   const isActive = (href: string) => {
     if (href === "/dashboard") {
@@ -73,6 +81,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
     return pathname.startsWith(href);
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-500" />
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!user || user.role !== "admin") {
+    return <AccessDenied />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -168,16 +190,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             )}
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-medium text-slate-700">
-              AD
+              {user.username?.slice(0, 2).toUpperCase() || "AD"}
             </div>
             {!collapsed && (
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-slate-900">
-                  Admin User
+                  {user.username}
                 </p>
-                <p className="truncate text-xs text-slate-500">
-                  admin@hukumid.com
-                </p>
+                <p className="truncate text-xs text-slate-500">{user.email}</p>
               </div>
             )}
             {!collapsed && (
