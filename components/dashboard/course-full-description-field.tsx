@@ -3,11 +3,13 @@ import { Textarea } from "@/components/ui/textarea";
 
 export interface FullDescriptionFieldProps {
   value: string;
+  error: string | undefined;
   onChange: (value: string) => void;
 }
 
 export default function FullDescriptionField({
   value,
+  error,
   onChange,
 }: FullDescriptionFieldProps) {
   return (
@@ -20,6 +22,7 @@ export default function FullDescriptionField({
         onChange={(e) => onChange(e.target.value)}
         rows={5}
       />
+      {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
 }

@@ -12,145 +12,151 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Star,
-  Users,
   Calendar,
-  Clock,
-  MapPin,
   ArrowRight,
   Sparkles,
+  Star,
+  Users,
+  Pin,
+  MapPin,
+  Clock,
 } from "lucide-react";
-import {
-  latestTrainings,
-  formatDate,
-  getStatusBadgeVariant,
-  getStatusLabel,
-  getTypeLabel,
-} from "@/lib/training-data";
+import { formatDate, getTypeLabel } from "@/lib/training-data";
+import { useGetWorkshops } from "@/hooks/workshop/use-get-workshops";
+import { formatPrice } from "@/utils/format-price";
 
 export default function LatestTrainingSection() {
+  const { workshops, isLoading, isError } = useGetWorkshops();
+
   return (
-    <section id="latest-training" className="py-20 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
+    <section id="latest-training" className="bg-background py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 text-center">
+          <div className="bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2">
             <Sparkles size={16} />
-            <span className="text-sm font-medium">Pelatihan Terbaru</span>
+            <span className="text-sm font-medium">Workshop Terbaru</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
-            Kelas Pelatihan Terkini
+          <h2 className="text-foreground mb-4 text-4xl font-bold text-balance md:text-5xl">
+            Workshop Terkini
           </h2>
-          <p className="text-xl text-muted-foreground text-balance max-w-2xl mx-auto">
-            Tingkatkan kompetensi Anda dengan program pelatihan terbaru dari
+          <p className="text-muted-foreground mx-auto max-w-2xl text-xl text-balance">
+            Tingkatkan kompetensi Anda dengan program workshop terbaru dari
             Dewan Hukum Siber Indonesia.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {latestTrainings.map((training) => (
+        {isLoading && (
+          <p className="text-muted-foreground text-center">
+            Memuat data workshop...
+          </p>
+        )}
+
+        {isError && !isLoading && (
+          <p className="text-destructive text-center">
+            Gagal memuat data workshop. Silakan coba lagi nanti.
+          </p>
+        )}
+
+        {!isLoading && !isError && workshops.length === 0 && (
+          <p className="text-muted-foreground text-center">
+            Belum ada workshop yang tersedia saat ini.
+          </p>
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          {workshops.slice(0, 3).map((workshop) => (
             <Card
-              key={training.id}
-              className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col"
+              key={workshop.id}
+              className="group flex cursor-pointer flex-col overflow-hidden transition-all duration-300 hover:shadow-xl"
             >
-              <div className="relative h-48 w-full overflow-hidden bg-muted">
+              <div className="bg-muted relative h-48 w-full overflow-hidden">
                 <Image
-                  src={training.thumbnail || "/placeholder.svg"}
-                  alt={training.title}
+                  src={workshop.thumbnail || "/placeholder.svg"}
+                  alt={workshop.title}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute top-3 left-3 flex gap-2">
-                  <Badge variant={getStatusBadgeVariant(training.status)}>
-                    {getStatusLabel(training.status)}
-                  </Badge>
                   <Badge
-                    variant="outline"
-                    className="bg-background/80 backdrop-blur-sm"
+                    variant="default"
+                    className="bg-primary text-primary-foreground"
                   >
-                    {getTypeLabel(training.type)}
+                    {getTypeLabel("workshop")}
                   </Badge>
                 </div>
               </div>
               <CardHeader className="flex-1">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                <div className="text-muted-foreground mb-2 flex items-center gap-2 text-sm">
                   <Badge variant="secondary" className="text-xs">
-                    {training.category}
+                    {workshop.category ?? "Workshop DHSI"}
                   </Badge>
-                  <span>•</span>
-                  <span>{training.level}</span>
                 </div>
-                <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
-                  {training.title}
+                <CardTitle className="group-hover:text-primary line-clamp-2 text-lg transition-colors">
+                  {workshop.title}
                 </CardTitle>
                 <CardDescription className="line-clamp-2">
-                  {training.short_description}
+                  {workshop.short_description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted shrink-0">
+                  <div className="bg-muted relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
                     <Image
-                      src={training.instructor.avatar || "/placeholder.svg"}
-                      alt={training.instructor.name}
+                      src={"/placeholder.svg"}
+                      alt={"Instructor"}
                       fill
                       className="object-cover"
                     />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {training.instructor.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {training.instructor.title}
-                    </p>
+                  <div>
+                    <div className="text-sm font-bold">
+                      Dewan Hukum Siber Indonesia
+                    </div>
+                    <div className="text-gray-500 text-xs">Dewan Hukum Siber Indonesia</div>
                   </div>
                 </div>
 
-                <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="text-muted-foreground space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <Calendar size={14} />
-                    <span>{formatDate(training.date)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock size={14} />
-                    <span>{training.duration}</span>
+                    <span>{formatDate(workshop.created_at)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin size={14} />
-                    <span className="truncate">
-                      {training.is_online ? "Online" : training.location}
-                    </span>
+                    <span>Online</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock size={14} />
+                    <span>5 jam</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t">
+                <div className="flex items-center justify-between border-t pt-3">
                   <div className="flex items-center gap-4">
-                    {training.rating && (
-                      <div className="flex items-center gap-1">
-                        <Star
-                          size={14}
-                          className="fill-yellow-400 text-yellow-400"
-                        />
-                        <span className="text-sm font-semibold">
-                          {training.rating}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Star
+                        size={14}
+                        className="fill-yellow-400 text-yellow-400"
+                      />
+                      <span className="text-sm font-semibold">
+                        {(Math.random() * (5 - 4) + 4.0).toFixed(1)}
+                      </span>
+                    </div>
+
+                    <div className="text-muted-foreground flex items-center gap-1 text-sm">
                       <Users size={14} />
                       <span>
-                        {training.enrolled_participants}/
-                        {training.max_participants}
+                        {23}/{25}
                       </span>
                     </div>
                   </div>
-                  <span className="font-bold text-primary">
-                    {training.price}
+                  <span className="text-primary font-bold">
+                    {formatPrice(workshop.price)}
                   </span>
                 </div>
 
-                <Link href={`/training/${training.id}`}>
-                  <Button className="w-full gap-2 mt-2" variant="outline">
+                <Link href={`/workshop/${workshop.id}`}>
+                  <Button className="mt-2 w-full gap-2" variant="outline">
                     Lihat Detail <ArrowRight size={16} />
                   </Button>
                 </Link>
@@ -159,13 +165,7 @@ export default function LatestTrainingSection() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Link href="/training">
-            <Button size="lg" className="gap-2">
-              Lihat Semua Pelatihan <ArrowRight size={20} />
-            </Button>
-          </Link>
-        </div>
+        {/* TODO: Tambahkan halaman listing semua workshop bila sudah tersedia */}
       </div>
     </section>
   );

@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import useGetUser from "@/hooks/auth/use-get-user";
 import AccessDenied from "@/components/access-denied";
+import Image from "next/image";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -118,17 +119,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4">
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900">
-                <GraduationCap className="h-5 w-5 text-white" />
+              <div className="flex items-center justify-center">
+                <Image src={"/logo.webp"} alt="Logo" width={48} height={48} />
               </div>
-              <span className="text-lg font-bold text-slate-900">
-                Hukum<span className="text-blue-600">ID</span>
+              <span className="text-sm font-bold text-slate-900">
+                Dewan Hukum Siber Indonesia
               </span>
             </Link>
           )}
+
           {collapsed && (
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900">
-              <GraduationCap className="h-5 w-5 text-white" />
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg">
+              <Image src={"/logo.webp"} alt="Logo" width={40} height={19} />
             </div>
           )}
           <Button

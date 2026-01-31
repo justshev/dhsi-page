@@ -26,14 +26,22 @@ export type MyResponse = {
   role: "admin" | "user";
 };
 
-export type CreateCoursePayload = {
+export interface CreateWorkshopFormValues {
   title: string;
   short_description: string;
   description: string;
   category: string;
-  level: string;
-  // duration: string;
-  thumbnail: null | File;
-  author: string;
+  thumbnail: File | null;
   price: string;
-};
+  benefits: string[];
+}
+
+export interface CreateWorkshopRequestPayload {
+  title: string;
+  short_description: string;
+  description: string;
+  category: string;
+  thumbnail: File | null;
+  price: number; // NUMBER
+  benefits: string[];
+}
