@@ -24,19 +24,18 @@ import { upcomingWorkshops, formatDate } from "@/lib/training-data";
 
 export default function UpcomingWorkshopSection() {
   return (
-    <section id="upcoming-workshops" className="py-20 bg-muted">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
+    <section id="upcoming-workshops" className="bg-muted py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 text-center">
+          <div className="bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2">
             <Calendar size={16} />
             <span className="text-sm font-medium">Segera Hadir</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
-            Workshop Mendatang
+          <h2 className="text-foreground mb-4 text-4xl font-bold text-balance md:text-5xl">
+            Pelatihan Mendatang
           </h2>
-          <p className="text-xl text-muted-foreground text-balance max-w-2xl mx-auto">
-            Praktik langsung dan hands-on dengan para pakar dalam workshop
-            eksklusif kami.
+          <p className="text-muted-foreground mx-auto max-w-2xl text-xl text-balance">
+            Praktik langsung dengan para pakar dalam pelatihan eksklusif kami.
           </p>
         </div>
 
@@ -44,17 +43,17 @@ export default function UpcomingWorkshopSection() {
           {upcomingWorkshops.map((workshop, index) => (
             <Card
               key={workshop.id}
-              className={`overflow-hidden hover:shadow-xl transition-all duration-300 ${
+              className={`overflow-hidden transition-all duration-300 hover:shadow-xl ${
                 index === 0 ? "border-primary border-2" : ""
               }`}
             >
               <div className="grid md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr]">
-                <div className="relative h-48 md:h-full min-h-[200px] overflow-hidden bg-muted">
+                <div className="bg-muted relative h-48 min-h-[200px] overflow-hidden md:h-full">
                   <Image
                     src={workshop.thumbnail || "/placeholder.svg"}
                     alt={workshop.title}
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
                   />
                   {index === 0 && (
                     <div className="absolute top-3 left-3">
@@ -67,7 +66,7 @@ export default function UpcomingWorkshopSection() {
 
                 <div className="flex flex-col">
                   <CardHeader>
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
                       <Badge variant="secondary">{workshop.category}</Badge>
                       <Badge variant="outline">{workshop.level}</Badge>
                       <Badge
@@ -90,15 +89,15 @@ export default function UpcomingWorkshopSection() {
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="flex-1 flex flex-col justify-between">
-                    <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                  <CardContent className="flex flex-1 flex-col justify-between">
+                    <div className="mb-4 grid gap-4 sm:grid-cols-2">
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
                             <Calendar size={16} className="text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                               Tanggal
                             </p>
                             <p className="font-medium">
@@ -107,11 +106,11 @@ export default function UpcomingWorkshopSection() {
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
                             <Clock size={16} className="text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                               Waktu
                             </p>
                             <p className="font-medium">{workshop.time}</p>
@@ -120,22 +119,22 @@ export default function UpcomingWorkshopSection() {
                       </div>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
                             <MapPin size={16} className="text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                               Lokasi
                             </p>
                             <p className="font-medium">{workshop.location}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
                             <Users size={16} className="text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                               Peserta
                             </p>
                             <p className="font-medium">
@@ -147,9 +146,9 @@ export default function UpcomingWorkshopSection() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t">
+                    <div className="flex flex-col items-start justify-between gap-4 border-t pt-4 sm:flex-row sm:items-center">
                       <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted">
+                        <div className="bg-muted relative h-10 w-10 overflow-hidden rounded-full">
                           <Image
                             src={
                               workshop.instructor.avatar || "/placeholder.svg"
@@ -163,13 +162,13 @@ export default function UpcomingWorkshopSection() {
                           <p className="text-sm font-medium">
                             {workshop.instructor.name}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-muted-foreground text-xs">
                             {workshop.instructor.title}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-xl font-bold text-primary">
+                        <span className="text-primary text-xl font-bold">
                           {workshop.price}
                         </span>
                         <Link href={`/training/${workshop.id}`}>

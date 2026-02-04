@@ -34,32 +34,32 @@ export default function LatestTrainingSection() {
         <div className="mb-16 text-center">
           <div className="bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2">
             <Sparkles size={16} />
-            <span className="text-sm font-medium">Workshop Terbaru</span>
+            <span className="text-sm font-medium">Pelatihan Terbaru</span>
           </div>
           <h2 className="text-foreground mb-4 text-4xl font-bold text-balance md:text-5xl">
-            Workshop Terkini
+            Pelatihan Terkini
           </h2>
           <p className="text-muted-foreground mx-auto max-w-2xl text-xl text-balance">
-            Tingkatkan kompetensi Anda dengan program workshop terbaru dari
+            Tingkatkan kompetensi Anda dengan program pelatihan terbaru dari
             Dewan Hukum Siber Indonesia.
           </p>
         </div>
 
         {isLoading && (
           <p className="text-muted-foreground text-center">
-            Memuat data workshop...
+            Memuat data pelatihan...
           </p>
         )}
 
         {isError && !isLoading && (
           <p className="text-destructive text-center">
-            Gagal memuat data workshop. Silakan coba lagi nanti.
+            Gagal memuat data pelatihan. Silakan coba lagi nanti.
           </p>
         )}
 
         {!isLoading && !isError && workshops.length === 0 && (
           <p className="text-muted-foreground text-center">
-            Belum ada workshop yang tersedia saat ini.
+            Belum ada pelatihan yang tersedia saat ini.
           </p>
         )}
 
@@ -81,14 +81,14 @@ export default function LatestTrainingSection() {
                     variant="default"
                     className="bg-primary text-primary-foreground"
                   >
-                    {getTypeLabel("workshop")}
+                    {getTypeLabel("pelatihan")}
                   </Badge>
                 </div>
               </div>
               <CardHeader className="flex-1">
                 <div className="text-muted-foreground mb-2 flex items-center gap-2 text-sm">
                   <Badge variant="secondary" className="text-xs">
-                    {workshop.category ?? "Workshop DHSI"}
+                    {workshop.category ?? "Pelatihan DHSI"}
                   </Badge>
                 </div>
                 <CardTitle className="group-hover:text-primary line-clamp-2 text-lg transition-colors">

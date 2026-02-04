@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useAuth } from "@/lib/auth-context";
 import {
   Card,
   CardContent,
@@ -45,21 +43,13 @@ import {
   Lock,
 } from "lucide-react";
 import {
-  type DeceasedInfo,
-  type Heir,
-  type HeirRelation,
-  type InheritanceInput,
-  type InheritanceResult,
-  type LawSystem,
   type Gender,
   type MaritalStatus,
-  getRelationLabel,
   getRelationLabelWithGender,
   getAvailableHeirRelations,
-  calculateInheritance,
   formatCurrency,
-  validateInput,
 } from "@/lib/inheritance-calculator";
+import { useInheritanceCalculator } from "@/hooks/inheritance/use-inheritance-calculator";
 
 // Steps for the wizard
 const steps = [
@@ -86,59 +76,72 @@ const steps = [
 ];
 
 export function InheritanceCalculatorPage() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [lawSystem, setLawSystem] = useState<LawSystem | null>(null);
-  const [deceased, setDeceased] = useState<DeceasedInfo>({
-    name: "",
-    gender: "male",
-    maritalStatus: "married",
-  });
-  const [heirs, setHeirs] = useState<Heir[]>([]);
-  const [totalEstate, setTotalEstate] = useState<number>(0);
-  const [debts, setDebts] = useState<number>(0);
-  const [funeralCosts, setFuneralCosts] = useState<number>(0);
-  const [wasiat, setWasiat] = useState<number>(0);
-  const [result, setResult] = useState<InheritanceResult | null>(null);
-  const [errors, setErrors] = useState<string[]>([]);
+  const {
+    hasLoggedin,
+    isLoading,
+    currentStep,
+    lawSystem,
+    setLawSystem,
+    deceased,
+    setDeceased,
+    heirs,
+    addHeir,
+    updateHeir,
+    removeHeir,
+    totalEstate,
+    setTotalEstate,
+    debts,
+    setDebts,
+    funeralCosts,
+    setFuneralCosts,
+    wasiat,
+    setWasiat,
+    result,
+    errors,
+    resetCalculator,
+    nextStep,
+    prevStep,
+    canProceed,
+    progress,
+  } = useInheritanceCalculator(steps.length);
 
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <Loader2 className="h-8 w-8 animate-spin text-teal-500" />
       </div>
     );
   }
 
   // Not authenticated - show login prompt
-  if (!isAuthenticated) {
+  if (!hasLoggedin) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
+      <div className="flex min-h-screen flex-col bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="p-4">
           <Link
             href="/"
-            className="inline-flex items-center text-sm text-slate-300 hover:text-white transition-colors"
+            className="inline-flex items-center text-sm text-slate-300 transition-colors hover:text-white"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Kembali ke Beranda
           </Link>
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-4">
-          <Card className="max-w-md w-full">
+        <div className="flex flex-1 items-center justify-center px-4">
+          <Card className="w-full max-w-md">
             <CardContent className="pt-8 pb-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
                 <Lock className="h-8 w-8 text-slate-400" />
               </div>
-              <h2 className="text-xl font-bold text-slate-900 mb-2">
+              <h2 className="mb-2 text-xl font-bold text-slate-900">
                 Login Diperlukan
               </h2>
-              <p className="text-slate-600 mb-6">
+              <p className="mb-6 text-slate-600">
                 Anda harus login terlebih dahulu untuk menggunakan Kalkulator
                 Ahli Waris
               </p>
-              <div className="flex gap-3 justify-center">
+              <div className="flex justify-center gap-3">
                 <Link href="/login?redirect=/kalkulator-waris">
                   <Button className="bg-teal-500 hover:bg-teal-600">
                     Masuk
@@ -155,132 +158,14 @@ export function InheritanceCalculatorPage() {
     );
   }
 
-  // Add new heir
-  const addHeir = useCallback(
-    (relation: HeirRelation) => {
-      const newHeir: Heir = {
-        id: `heir-${Date.now()}`,
-        relation,
-        name: "",
-        gender: [
-          "son",
-          "father",
-          "grandfather",
-          "brother_full",
-          "brother_paternal",
-          "brother_maternal",
-          "uncle_paternal",
-          "son_of_son",
-          "son_of_uncle",
-        ].includes(relation)
-          ? "male"
-          : "female",
-        isAlive: true,
-        count: 1,
-      };
-      setHeirs([...heirs, newHeir]);
-    },
-    [heirs]
-  );
-
-  // Update heir
-  const updateHeir = useCallback(
-    (id: string, updates: Partial<Heir>) => {
-      setHeirs(heirs.map((h) => (h.id === id ? { ...h, ...updates } : h)));
-    },
-    [heirs]
-  );
-
-  // Remove heir
-  const removeHeir = useCallback(
-    (id: string) => {
-      setHeirs(heirs.filter((h) => h.id !== id));
-    },
-    [heirs]
-  );
-
-  // Calculate result
-  const calculate = useCallback(() => {
-    if (!lawSystem) return;
-
-    const input: InheritanceInput = {
-      deceased,
-      heirs,
-      totalEstate,
-      debts,
-      funeralCosts,
-      wasiat,
-      lawSystem,
-    };
-
-    const validationErrors = validateInput(input);
-    if (validationErrors.length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setErrors([]);
-    const calculationResult = calculateInheritance(input);
-    setResult(calculationResult);
-    setCurrentStep(5);
-  }, [lawSystem, deceased, heirs, totalEstate, debts, funeralCosts, wasiat]);
-
-  // Reset calculator
-  const resetCalculator = useCallback(() => {
-    setCurrentStep(1);
-    setLawSystem(null);
-    setDeceased({ name: "", gender: "male", maritalStatus: "married" });
-    setHeirs([]);
-    setTotalEstate(0);
-    setDebts(0);
-    setFuneralCosts(0);
-    setWasiat(0);
-    setResult(null);
-    setErrors([]);
-  }, []);
-
-  // Navigation
-  const nextStep = () => {
-    if (currentStep < 5) {
-      if (currentStep === 4) {
-        calculate();
-      } else {
-        setCurrentStep(currentStep + 1);
-      }
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const canProceed = (): boolean => {
-    switch (currentStep) {
-      case 1:
-        return lawSystem !== null;
-      case 2:
-        return deceased.name.trim() !== "";
-      case 3:
-        return heirs.length > 0;
-      case 4:
-        return totalEstate > 0;
-      default:
-        return true;
-    }
-  };
-
-  const progress = (currentStep / steps.length) * 100;
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-linear-to-r from-slate-800 to-slate-900 text-white py-8">
+      <div className="bg-linear-to-r from-slate-800 to-slate-900 py-8 text-white">
         <div className="container mx-auto px-4">
           <Link
             href="/"
-            className="inline-flex items-center text-sm text-slate-300 hover:text-white mb-4 transition-colors"
+            className="mb-4 inline-flex items-center text-sm text-slate-300 transition-colors hover:text-white"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Kembali ke Beranda
@@ -290,7 +175,7 @@ export function InheritanceCalculatorPage() {
               <Calculator className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">
+              <h1 className="text-2xl font-bold md:text-3xl">
                 Kalkulator Ahli Waris
               </h1>
               <p className="text-slate-300">
@@ -302,9 +187,9 @@ export function InheritanceCalculatorPage() {
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="sticky top-0 z-10 border-b bg-white">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3 flex items-center justify-between">
             {steps.map((step, index) => (
               <div
                 key={step.id}
@@ -327,7 +212,7 @@ export function InheritanceCalculatorPage() {
                     )}
                   </div>
                   <span
-                    className={`hidden md:block text-sm font-medium ${
+                    className={`hidden text-sm font-medium md:block ${
                       currentStep >= step.id
                         ? "text-slate-900"
                         : "text-slate-400"
@@ -338,7 +223,7 @@ export function InheritanceCalculatorPage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`flex-1 h-0.5 mx-3 ${
+                    className={`mx-3 h-0.5 flex-1 ${
                       currentStep > step.id ? "bg-teal-500" : "bg-slate-200"
                     }`}
                   />
@@ -352,26 +237,26 @@ export function InheritanceCalculatorPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto max-w-4xl">
           {/* Step 1: Law System */}
           {currentStep === 1 && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              <div className="mb-8 text-center">
+                <h2 className="mb-2 text-2xl font-bold text-slate-900">
                   Pilih Sistem Hukum Waris
                 </h2>
-                <p className="text-slate-600 max-w-xl mx-auto">
+                <p className="mx-auto max-w-xl text-slate-600">
                   Tentukan sistem hukum yang akan digunakan untuk menghitung
                   pembagian warisan
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid gap-6 md:grid-cols-2">
                 {/* Islamic Law */}
                 <Card
                   className={`cursor-pointer transition-all hover:shadow-lg ${
                     lawSystem === "islam"
-                      ? "ring-2 ring-teal-500 bg-teal-50"
+                      ? "bg-teal-50 ring-2 ring-teal-500"
                       : "hover:border-teal-300"
                   }`}
                   onClick={() => setLawSystem("islam")}
@@ -382,7 +267,7 @@ export function InheritanceCalculatorPage() {
                         <BookOpen className="h-7 w-7 text-white" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="mb-2 flex items-center gap-2">
                           <h3 className="text-lg font-bold text-slate-900">
                             Hukum Islam (Faraid)
                           </h3>
@@ -390,7 +275,7 @@ export function InheritanceCalculatorPage() {
                             <CheckCircle2 className="h-5 w-5 text-teal-500" />
                           )}
                         </div>
-                        <p className="text-sm text-slate-600 mb-4">
+                        <p className="mb-4 text-sm text-slate-600">
                           Pembagian berdasarkan ketentuan Al-Quran dan Hadits.
                           Setiap ahli waris memiliki bagian yang sudah
                           ditentukan (dzawil furudh) atau sebagai penerima sisa
@@ -421,7 +306,7 @@ export function InheritanceCalculatorPage() {
                 <Card
                   className={`cursor-pointer transition-all hover:shadow-lg ${
                     lawSystem === "perdata"
-                      ? "ring-2 ring-teal-500 bg-teal-50"
+                      ? "bg-teal-50 ring-2 ring-teal-500"
                       : "hover:border-teal-300"
                   }`}
                   onClick={() => setLawSystem("perdata")}
@@ -432,7 +317,7 @@ export function InheritanceCalculatorPage() {
                         <Scale className="h-7 w-7 text-white" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="mb-2 flex items-center gap-2">
                           <h3 className="text-lg font-bold text-slate-900">
                             Hukum Perdata Indonesia
                           </h3>
@@ -440,7 +325,7 @@ export function InheritanceCalculatorPage() {
                             <CheckCircle2 className="h-5 w-5 text-teal-500" />
                           )}
                         </div>
-                        <p className="text-sm text-slate-600 mb-4">
+                        <p className="mb-4 text-sm text-slate-600">
                           Pembagian berdasarkan Kitab Undang-Undang Hukum
                           Perdata (KUHPerdata). Ahli waris dibagi dalam 4
                           golongan dengan prioritas berbeda.
@@ -466,12 +351,12 @@ export function InheritanceCalculatorPage() {
               </div>
 
               {/* Info Box */}
-              <Card className="bg-blue-50 border-blue-200">
+              <Card className="border-blue-200 bg-blue-50">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                    <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
                     <div className="text-sm text-blue-800">
-                      <p className="font-medium mb-1">Perbedaan Utama:</p>
+                      <p className="mb-1 font-medium">Perbedaan Utama:</p>
                       <p>
                         Dalam Hukum Islam, bagian setiap ahli waris sudah
                         ditentukan secara spesifik, sedangkan dalam Hukum
@@ -488,18 +373,18 @@ export function InheritanceCalculatorPage() {
           {/* Step 2: Deceased Info */}
           {currentStep === 2 && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              <div className="mb-8 text-center">
+                <h2 className="mb-2 text-2xl font-bold text-slate-900">
                   Data Pewaris (Almarhum/Almarhumah)
                 </h2>
-                <p className="text-slate-600 max-w-xl mx-auto">
+                <p className="mx-auto max-w-xl text-slate-600">
                   Masukkan informasi tentang orang yang meninggal dan akan
                   dibagikan hartanya
                 </p>
               </div>
 
               <Card>
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="space-y-6 p-6">
                   {/* Name */}
                   <div className="space-y-2">
                     <Label htmlFor="deceased-name">Nama Pewaris *</Label>
@@ -555,7 +440,7 @@ export function InheritanceCalculatorPage() {
                   {/* Marital Status */}
                   <div className="space-y-2">
                     <Label>Status Pernikahan Terakhir *</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                       {[
                         { value: "married", label: "Menikah" },
                         { value: "widowed", label: "Janda/Duda" },
@@ -591,12 +476,12 @@ export function InheritanceCalculatorPage() {
               </Card>
 
               {/* Info about deceased gender impact */}
-              <Card className="bg-amber-50 border-amber-200">
+              <Card className="border-amber-200 bg-amber-50">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                     <div className="text-sm text-amber-800">
-                      <p className="font-medium mb-1">Penting:</p>
+                      <p className="mb-1 font-medium">Penting:</p>
                       <p>
                         Jenis kelamin dan status pernikahan pewaris akan
                         mempengaruhi bagian yang diterima ahli waris, terutama
@@ -612,11 +497,11 @@ export function InheritanceCalculatorPage() {
           {/* Step 3: Heirs */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              <div className="mb-8 text-center">
+                <h2 className="mb-2 text-2xl font-bold text-slate-900">
                   Daftar Ahli Waris
                 </h2>
-                <p className="text-slate-600 max-w-xl mx-auto">
+                <p className="mx-auto max-w-xl text-slate-600">
                   Tambahkan semua ahli waris yang masih hidup dari
                   almarhum/almarhumah {deceased.name}
                 </p>
@@ -625,7 +510,7 @@ export function InheritanceCalculatorPage() {
               {/* Add Heir Section */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <Plus className="h-5 w-5" />
                     Tambah Ahli Waris
                   </CardTitle>
@@ -635,11 +520,11 @@ export function InheritanceCalculatorPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
                     {getAvailableHeirRelations(deceased).map((relation) => {
                       // Check if spouse already added
                       const isSpouseAdded = heirs.some(
-                        (h) => h.relation === "spouse"
+                        (h) => h.relation === "spouse",
                       );
                       const isDisabled = relation === "spouse" && isSpouseAdded;
 
@@ -648,15 +533,15 @@ export function InheritanceCalculatorPage() {
                           key={relation}
                           variant="outline"
                           size="sm"
-                          className="justify-start text-xs h-auto py-2"
+                          className="h-auto justify-start py-2 text-xs"
                           onClick={() => addHeir(relation)}
                           disabled={isDisabled}
                         >
-                          <Plus className="h-3 w-3 mr-1 shrink-0" />
+                          <Plus className="mr-1 h-3 w-3 shrink-0" />
                           <span className="truncate">
                             {getRelationLabelWithGender(
                               relation,
-                              deceased.gender
+                              deceased.gender,
                             )}
                           </span>
                         </Button>
@@ -670,7 +555,7 @@ export function InheritanceCalculatorPage() {
               {heirs.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-lg">
                       <Users className="h-5 w-5" />
                       Ahli Waris Terdaftar ({heirs.length})
                     </CardTitle>
@@ -679,12 +564,12 @@ export function InheritanceCalculatorPage() {
                     {heirs.map((heir, index) => (
                       <div
                         key={heir.id}
-                        className="flex items-start gap-4 p-4 rounded-lg border bg-slate-50"
+                        className="flex items-start gap-4 rounded-lg border bg-slate-50 p-4"
                       >
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-sm font-medium">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-100 text-sm font-medium text-teal-700">
                           {index + 1}
                         </div>
-                        <div className="flex-1 grid gap-4 md:grid-cols-3">
+                        <div className="grid flex-1 gap-4 md:grid-cols-3">
                           <div className="space-y-1.5">
                             <Label className="text-xs text-slate-500">
                               Hubungan
@@ -692,7 +577,7 @@ export function InheritanceCalculatorPage() {
                             <Badge variant="secondary">
                               {getRelationLabelWithGender(
                                 heir.relation,
-                                deceased.gender
+                                deceased.gender,
                               )}
                             </Badge>
                           </div>
@@ -731,7 +616,7 @@ export function InheritanceCalculatorPage() {
                                   updateHeir(heir.id, {
                                     count: Math.max(
                                       1,
-                                      parseInt(e.target.value) || 1
+                                      parseInt(e.target.value) || 1,
                                     ),
                                   })
                                 }
@@ -743,7 +628,7 @@ export function InheritanceCalculatorPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-500 hover:bg-red-50 hover:text-red-700"
                           onClick={() => removeHeir(heir.id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -757,11 +642,11 @@ export function InheritanceCalculatorPage() {
               {heirs.length === 0 && (
                 <Card className="border-dashed">
                   <CardContent className="p-8 text-center">
-                    <Users className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                    <Users className="mx-auto mb-3 h-12 w-12 text-slate-300" />
                     <p className="text-slate-500">
                       Belum ada ahli waris yang ditambahkan
                     </p>
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="mt-1 text-sm text-slate-400">
                       Klik tombol di atas untuk menambahkan ahli waris
                     </p>
                   </CardContent>
@@ -773,18 +658,18 @@ export function InheritanceCalculatorPage() {
           {/* Step 4: Estate & Debts */}
           {currentStep === 4 && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              <div className="mb-8 text-center">
+                <h2 className="mb-2 text-2xl font-bold text-slate-900">
                   Harta dan Kewajiban
                 </h2>
-                <p className="text-slate-600 max-w-xl mx-auto">
+                <p className="mx-auto max-w-xl text-slate-600">
                   Masukkan nilai total harta warisan dan kewajiban yang harus
                   dibayar
                 </p>
               </div>
 
               <Card>
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="space-y-6 p-6">
                   {/* Total Estate */}
                   <div className="space-y-2">
                     <Label
@@ -799,7 +684,7 @@ export function InheritanceCalculatorPage() {
                       investasi, dll
                     </p>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <span className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-500">
                         Rp
                       </span>
                       <Input
@@ -812,7 +697,7 @@ export function InheritanceCalculatorPage() {
                       />
                     </div>
                     {totalEstate > 0 && (
-                      <p className="text-sm text-teal-600 font-medium">
+                      <p className="text-sm font-medium text-teal-600">
                         {formatCurrency(totalEstate)}
                       </p>
                     )}
@@ -827,7 +712,7 @@ export function InheritanceCalculatorPage() {
                       Total hutang yang harus dilunasi dari harta warisan
                     </p>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <span className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-500">
                         Rp
                       </span>
                       <Input
@@ -848,7 +733,7 @@ export function InheritanceCalculatorPage() {
                       Biaya pengurusan jenazah dan pemakaman
                     </p>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <span className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-500">
                         Rp
                       </span>
                       <Input
@@ -880,7 +765,7 @@ export function InheritanceCalculatorPage() {
                         " (dalam hukum Islam dibatasi maksimal 1/3 dari harta bersih)"}
                     </p>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <span className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-500">
                         Rp
                       </span>
                       <Input
@@ -897,10 +782,10 @@ export function InheritanceCalculatorPage() {
                   <Separator />
 
                   {/* Net Estate Preview */}
-                  <div className="bg-teal-50 rounded-lg p-4">
-                    <div className="flex justify-between items-center">
+                  <div className="rounded-lg bg-teal-50 p-4">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-teal-700 font-medium">
+                        <p className="text-sm font-medium text-teal-700">
                           Perkiraan Harta Bersih
                         </p>
                         <p className="text-xs text-teal-600">
@@ -911,8 +796,8 @@ export function InheritanceCalculatorPage() {
                         {formatCurrency(
                           Math.max(
                             0,
-                            totalEstate - debts - funeralCosts - wasiat
-                          )
+                            totalEstate - debts - funeralCosts - wasiat,
+                          ),
                         )}
                       </p>
                     </div>
@@ -922,15 +807,15 @@ export function InheritanceCalculatorPage() {
 
               {/* Validation Errors */}
               {errors.length > 0 && (
-                <Card className="bg-red-50 border-red-200">
+                <Card className="border-red-200 bg-red-50">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                      <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
                       <div>
-                        <p className="font-medium text-red-800 mb-2">
+                        <p className="mb-2 font-medium text-red-800">
                           Mohon perbaiki kesalahan berikut:
                         </p>
-                        <ul className="text-sm text-red-700 space-y-1">
+                        <ul className="space-y-1 text-sm text-red-700">
                           {errors.map((error, index) => (
                             <li key={index}>• {error}</li>
                           ))}
@@ -946,14 +831,14 @@ export function InheritanceCalculatorPage() {
           {/* Step 5: Result */}
           {currentStep === 5 && result && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-100 mb-4">
+              <div className="mb-8 text-center">
+                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-teal-100">
                   <Sparkles className="h-8 w-8 text-teal-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                <h2 className="mb-2 text-2xl font-bold text-slate-900">
                   Hasil Perhitungan Waris
                 </h2>
-                <p className="text-slate-600 max-w-xl mx-auto">
+                <p className="mx-auto max-w-xl text-slate-600">
                   Berdasarkan{" "}
                   {lawSystem === "islam"
                     ? "Hukum Islam (Faraid)"
@@ -964,19 +849,19 @@ export function InheritanceCalculatorPage() {
               {/* Summary Card */}
               <Card className="bg-linear-to-br from-teal-500 to-teal-600 text-white">
                 <CardContent className="p-6">
-                  <div className="grid md:grid-cols-3 gap-6">
+                  <div className="grid gap-6 md:grid-cols-3">
                     <div>
-                      <p className="text-teal-100 text-sm">Pewaris</p>
+                      <p className="text-sm text-teal-100">Pewaris</p>
                       <p className="text-xl font-bold">{deceased.name}</p>
                     </div>
                     <div>
-                      <p className="text-teal-100 text-sm">Harta Bersih</p>
+                      <p className="text-sm text-teal-100">Harta Bersih</p>
                       <p className="text-xl font-bold">
                         {formatCurrency(result.netEstate)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-teal-100 text-sm">Jumlah Ahli Waris</p>
+                      <p className="text-sm text-teal-100">Jumlah Ahli Waris</p>
                       <p className="text-xl font-bold">
                         {result.shares.length} orang
                       </p>
@@ -987,15 +872,15 @@ export function InheritanceCalculatorPage() {
 
               {/* Warnings */}
               {result.warnings.length > 0 && (
-                <Card className="bg-amber-50 border-amber-200">
+                <Card className="border-amber-200 bg-amber-50">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                      <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                       <div>
-                        <p className="font-medium text-amber-800 mb-2">
+                        <p className="mb-2 font-medium text-amber-800">
                           Catatan Penting:
                         </p>
-                        <ul className="text-sm text-amber-700 space-y-1">
+                        <ul className="space-y-1 text-sm text-amber-700">
                           {result.warnings.map((warning, index) => (
                             <li key={index}>• {warning}</li>
                           ))}
@@ -1019,28 +904,28 @@ export function InheritanceCalculatorPage() {
                     {result.shares.map((share, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-4 p-4 rounded-lg border bg-slate-50"
+                        className="flex items-center gap-4 rounded-lg border bg-slate-50 p-4"
                       >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700 font-medium">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 font-medium text-teal-700">
                           {index + 1}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-1 flex flex-wrap items-center gap-2">
                             <p className="font-medium text-slate-900">
                               {share.heir.name ||
                                 getRelationLabelWithGender(
                                   share.heir.relation,
-                                  deceased.gender
+                                  deceased.gender,
                                 )}
                             </p>
                             <Badge variant="outline" className="text-xs">
                               {getRelationLabelWithGender(
                                 share.heir.relation,
-                                deceased.gender
+                                deceased.gender,
                               )}
                             </Badge>
                             {(share.heir.count || 1) > 1 && (
-                              <Badge className="text-xs bg-slate-200 text-slate-700">
+                              <Badge className="bg-slate-200 text-xs text-slate-700">
                                 {share.heir.count} orang
                               </Badge>
                             )}
@@ -1049,7 +934,7 @@ export function InheritanceCalculatorPage() {
                             {share.explanation}
                           </p>
                         </div>
-                        <div className="text-right shrink-0">
+                        <div className="shrink-0 text-right">
                           <p className="text-sm text-slate-500">
                             {share.fraction} ({share.percentage.toFixed(2)}%)
                           </p>
@@ -1076,7 +961,7 @@ export function InheritanceCalculatorPage() {
                     <ul className="space-y-2 text-sm text-slate-600">
                       {result.explanations.map((exp, index) => (
                         <li key={index} className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-teal-500 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
                           <span>{exp}</span>
                         </li>
                       ))}
@@ -1086,7 +971,7 @@ export function InheritanceCalculatorPage() {
               </Accordion>
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-4 justify-center pt-4">
+              <div className="flex flex-wrap justify-center gap-4 pt-4">
                 <Button
                   variant="outline"
                   onClick={resetCalculator}
@@ -1095,7 +980,7 @@ export function InheritanceCalculatorPage() {
                   <RefreshCw className="h-4 w-4" />
                   Hitung Ulang
                 </Button>
-                <Button className="bg-teal-500 hover:bg-teal-600 gap-2">
+                <Button className="gap-2 bg-teal-500 hover:bg-teal-600">
                   <Download className="h-4 w-4" />
                   Unduh Hasil (PDF)
                 </Button>
@@ -1108,12 +993,12 @@ export function InheritanceCalculatorPage() {
               </div>
 
               {/* Disclaimer */}
-              <Card className="bg-slate-100 border-slate-200">
+              <Card className="border-slate-200 bg-slate-100">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-slate-600 shrink-0 mt-0.5" />
+                    <Info className="mt-0.5 h-5 w-5 shrink-0 text-slate-600" />
                     <div className="text-sm text-slate-600">
-                      <p className="font-medium mb-1">Disclaimer:</p>
+                      <p className="mb-1 font-medium">Disclaimer:</p>
                       <p>
                         Hasil perhitungan ini bersifat simulasi dan hanya untuk
                         referensi. Untuk kepastian hukum, silakan berkonsultasi
@@ -1131,7 +1016,7 @@ export function InheritanceCalculatorPage() {
 
           {/* Navigation Buttons */}
           {currentStep < 5 && (
-            <div className="flex justify-between mt-8 pt-6 border-t">
+            <div className="mt-8 flex justify-between border-t pt-6">
               <Button
                 variant="outline"
                 onClick={prevStep}
@@ -1144,7 +1029,7 @@ export function InheritanceCalculatorPage() {
               <Button
                 onClick={nextStep}
                 disabled={!canProceed()}
-                className="bg-teal-500 hover:bg-teal-600 gap-2"
+                className="gap-2 bg-teal-500 hover:bg-teal-600"
               >
                 {currentStep === 4 ? (
                   <>
@@ -1164,11 +1049,11 @@ export function InheritanceCalculatorPage() {
       </div>
 
       {/* Guide Section */}
-      <div id="panduan" className="bg-white py-16 border-t">
+      <div id="panduan" className="border-t bg-white py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-12 text-center">
+              <h2 className="mb-2 text-2xl font-bold text-slate-900">
                 Panduan Penggunaan
               </h2>
               <p className="text-slate-600">
@@ -1177,15 +1062,15 @@ export function InheritanceCalculatorPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid gap-8 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <BookOpen className="h-5 w-5 text-emerald-500" />
                     Hukum Islam (Faraid)
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-slate-600 space-y-3">
+                <CardContent className="space-y-3 text-sm text-slate-600">
                   <p>
                     Dalam hukum waris Islam, pembagian diatur berdasarkan
                     Al-Quran Surah An-Nisa ayat 11-12. Ada dua jenis ahli waris:
@@ -1208,12 +1093,12 @@ export function InheritanceCalculatorPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <Scale className="h-5 w-5 text-blue-500" />
                     Hukum Perdata Indonesia
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-slate-600 space-y-3">
+                <CardContent className="space-y-3 text-sm text-slate-600">
                   <p>
                     Berdasarkan KUHPerdata, ahli waris dibagi dalam 4 golongan:
                   </p>

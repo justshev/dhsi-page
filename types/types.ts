@@ -32,7 +32,7 @@ export interface CreateWorkshopFormValues {
   description: string;
   category: string;
   thumbnail: File | null;
-  price: string;
+  credit_price: string;
   benefits: string[];
 }
 
@@ -42,6 +42,19 @@ export interface CreateWorkshopRequestPayload {
   description: string;
   category: string;
   thumbnail: File | null;
-  price: number; // NUMBER
+  credit_price: number; // NUMBER
   benefits: string[];
 }
+
+export type CreditPackage = {
+  id: string;
+  name: string;
+  price: string;
+  credits?: number;
+  bonus?: number;
+  bonusLabel?: string;
+  validity: string;
+  highlight?: "popular" | "best";
+  description?: string;
+  isCustom?: boolean;
+};

@@ -17,14 +17,14 @@ export default function PriceField({
   return (
     <div className="space-y-2">
       <Label htmlFor="price">
-        Harga Pelatihan <span className="text-red-500">*</span>
+        Harga Kredit Pelatihan <span className="text-red-500">*</span>
       </Label>
       <div className="relative">
         <Clock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
-          name="price"
-          id="price"
-          placeholder="Contoh: 100000"
+          name="credit_price"
+          id="credit_price"
+          placeholder="Contoh: 50"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={`pl-9 ${error ? "border-red-500" : ""}`}

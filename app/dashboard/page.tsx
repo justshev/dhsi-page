@@ -47,9 +47,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-slate-900">
             Selamat Datang di Dashboard
           </h1>
-          <p className="text-slate-600">
-            Kelola kursus hukum Indonesia Anda dengan mudah
-          </p>
+          <p className="text-slate-600">Kelola pelatihan Anda dengan mudah</p>
         </div>
 
         {/* Stats Grid */}
@@ -84,7 +82,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Workshop Terbaru</span>
+              <span>Pelatihan Terbaru</span>
               <Link
                 href="/dashboard/workshops"
                 className="text-sm font-normal text-blue-600 hover:underline"
@@ -95,9 +93,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <p className="text-sm text-slate-500">Memuat workshop...</p>
+              <p className="text-sm text-slate-500">Memuat pelatihan...</p>
             ) : workshops.length === 0 ? (
-              <p className="text-sm text-slate-500">Belum ada workshop</p>
+              <p className="text-sm text-slate-500">Belum ada pelatihan</p>
             ) : (
               <div className="space-y-4">
                 {workshops.slice(0, 4).map((workshop) => (
@@ -144,9 +142,7 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium text-slate-900">
                     Tambah Pelatihan
                   </p>
-                  <p className="text-sm text-slate-500">
-                    Buat pelatihan/workshop
-                  </p>
+                  <p className="text-sm text-slate-500">Buat pelatihan</p>
                 </div>
               </Link>
               <Link
@@ -184,7 +180,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Upcoming Trainings */}
-        <Card className="mt-6">
+        {/* <Card className="mt-6">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Pelatihan Akan Datang</span>
@@ -197,7 +193,7 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           {/* <CardContent></CardContent> */}
-        </Card>
+        {/* </Card> */}
       </div>
     </div>
   );

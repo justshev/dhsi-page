@@ -9,12 +9,12 @@ const useGetWorkshopDetail = (workshopId: string | undefined) => {
     enabled: !!workshopId,
     queryFn: () => getWorkshopDetail(workshopId as string),
   });
-  console.log(data)
+  const workshopNotFound = !isLoading && !data?.data;
 
   return {
     workshop: data?.data,
     isLoading,
+    workshopNotFound,
   };
 };
-
 export default useGetWorkshopDetail;

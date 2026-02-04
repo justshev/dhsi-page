@@ -33,7 +33,7 @@ const createWorkshopSchema = Yup.object({
 
   thumbnail: Yup.mixed<File>().nullable(),
 
-  price: Yup.string().matches(/^\d*$/, "Harga harus berupa angka").optional(),
+  credit_price: Yup.string().matches(/^\d*$/, "Harga harus berupa angka").optional(),
 
   benefits: Yup.array().of(Yup.string().min(1, "Benefit minimal 1 karakter")),
 });
@@ -72,7 +72,7 @@ const useCreateWorkshop = () => {
       description: "",
       category: "",
       thumbnail: null,
-      price: "",
+      credit_price: "",
       benefits: [""],
     },
 
@@ -82,7 +82,7 @@ const useCreateWorkshop = () => {
     onSubmit: (values) => {
       const requestPayload: CreateWorkshopRequestPayload = {
         ...values,
-        price: Number(values.price || 0),
+        credit_price: Number(values.credit_price || 0),
         benefits: values.benefits.filter(
           (benefit) => benefit && benefit.trim().length > 0,
         ),
