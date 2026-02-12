@@ -32,7 +32,7 @@ export interface CreateWorkshopFormValues {
   description: string;
   category: string;
   thumbnail: File | null;
-  credit_price: string;
+  credit_price: number;
   benefits: string[];
 }
 

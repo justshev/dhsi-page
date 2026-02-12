@@ -9,6 +9,7 @@ const useGetWorkshopDetail = (workshopId: string | undefined) => {
     enabled: !!workshopId,
     queryFn: () => getWorkshopDetail(workshopId as string),
   });
+
   const workshopNotFound = !isLoading && !data?.data;
 
   return {

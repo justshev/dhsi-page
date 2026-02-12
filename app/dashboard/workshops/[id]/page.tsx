@@ -61,7 +61,7 @@ export default function WorkshopDetailPage() {
   const workshopId = params?.id as string;
   const { workshop, isLoading } = useGetWorkshopDetail(workshopId);
   const { deleteModule, isDeleting } = useDeleteWorkshopModule(workshopId);
-
+console.log(workshop?.modules)
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -121,9 +121,7 @@ export default function WorkshopDetailPage() {
                   Harga Workshop
                 </p>
                 <p className="mt-1 text-2xl font-semibold text-emerald-300">
-                  {workshop
-                    ? `Rp ${workshop.price.toLocaleString("id-ID")}`
-                    : "-"}
+                  {workshop ? `${workshop.credit_price} Credit` : "-"}
                 </p>
               </div>
               <Button
@@ -146,7 +144,7 @@ export default function WorkshopDetailPage() {
                 Course Menu
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-sm -mt-10">
+            <CardContent className="-mt-10 text-sm">
               {isLoading && <p className="text-slate-500">Memuat modul...</p>}
               {!isLoading && workshop && workshop.modules.length === 0 && (
                 <p className="text-slate-500">

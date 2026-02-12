@@ -1,6 +1,6 @@
 "use client";
 
-import createCourseRequest from "@/services/workshop/create-workshop";
+import { createWorkshopRequest } from "@/services/workshop/create-workshop";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -33,7 +33,9 @@ const createWorkshopSchema = Yup.object({
 
   thumbnail: Yup.mixed<File>().nullable(),
 
-  credit_price: Yup.string().matches(/^\d*$/, "Harga harus berupa angka").optional(),
+  credit_price: Yup.number()
+    .min(0, "Harga harus berupa angka positif")
+    .optional(),
 
   benefits: Yup.array().of(Yup.string().min(1, "Benefit minimal 1 karakter")),
 });
@@ -46,9 +48,9 @@ const useCreateWorkshop = () => {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["create-course"],
+    mutationKey: ["create-workshop"],
     mutationFn: (payload: CreateWorkshopRequestPayload) => {
-      return createCourseRequest(payload);
+      return createWorkshopRequest(payload);
     },
     onSuccess: (response) => {
       toast.success("Kursus berhasil dibuat!");
@@ -72,7 +74,7 @@ const useCreateWorkshop = () => {
       description: "",
       category: "",
       thumbnail: null,
-      credit_price: "",
+      credit_price: 0,
       benefits: [""],
     },
 

@@ -85,9 +85,11 @@ export function WorkshopForm({ mode }: WorkshopFormProps) {
                   onChange={(value) => formik.setFieldValue("category", value)}
                 />
                 <PriceField
-                  value={formik.values.credit_price ?? ""}
+                  value={formik.values.credit_price}
                   error={formik.errors.credit_price as string | undefined}
-                  onChange={(value) => formik.setFieldValue("credit_price", value)}
+                  onChange={(value) =>
+                    formik.setFieldValue("credit_price", value)
+                  }
                 />
               </div>
 
