@@ -1,8 +1,11 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const router = useRouter();
   return (
     <section className="bg-background relative flex min-h-screen items-center">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -18,7 +21,11 @@ export default function Hero() {
               Indonesia.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button size="lg" className="gap-2">
+              <Button
+                size="lg"
+                className="gap-2"
+                onClick={() => router.push("/paket")}
+              >
                 Gabung Sebagai Anggota <ArrowRight size={20} />
               </Button>
               <Button size="lg" variant="outline">
@@ -50,7 +57,13 @@ export default function Hero() {
               priority
               className="rounded-2xl object-fill shadow-xl"
             /> */}
-            <Image src={'/logo.webp'} alt="Logo DHSI" fill priority className="rounded-2xl object-fill" />
+            <Image
+              src={"/logo.webp"}
+              alt="Logo DHSI"
+              fill
+              priority
+              className="rounded-2xl object-fill"
+            />
           </div>
 
           {/* <div className="relative mx-auto h-80 w-80 rounded-md bg-gray-200 md:h-100 md:w-100" /> */}

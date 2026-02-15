@@ -37,7 +37,15 @@ const createWorkshopSchema = Yup.object({
     .min(0, "Harga harus berupa angka positif")
     .optional(),
 
-  benefits: Yup.array().of(Yup.string().min(1, "Benefit minimal 1 karakter")),
+  benefits: Yup.array()
+    .of(
+      Yup.string()
+        .trim()
+        .min(1, "Manfaat wajib diisi")
+        .required("Manfaat wajib diisi"),
+    )
+    .min(3, "Minimal 3 manfaat kursus harus diisi")
+    .required("Manfaat kursus wajib diisi"),
 });
 
 /* ==============================
@@ -75,7 +83,7 @@ const useCreateWorkshop = () => {
       category: "",
       thumbnail: null,
       credit_price: 0,
-      benefits: [""],
+      benefits: ["", "", ""],
     },
 
     validationSchema: createWorkshopSchema,

@@ -25,6 +25,8 @@ import useGetPackets from "@/hooks/packets/use-get-packets";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import usePayment from "@/hooks/payment/use-payment";
+import { formatPrice } from "@/utils/format-price";
 
 /* ============================= */
 /* Skeleton Card Component */
@@ -74,6 +76,7 @@ const PackageCardSkeleton = () => {
 
 const PaketPage = () => {
   const { isLoading: isUserLoading, hasLoggedin } = useGetUser();
+  const { handleCreatePayment, isPaymentError, isPending } = usePayment();
 
   const {
     data: creditPackages,
@@ -85,7 +88,7 @@ const PaketPage = () => {
   /* Global User Loading */
   /* ============================= */
 
-  if (isUserLoading) {
+  if (isUserLoading && hasLoggedin) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
         <Loader2 className="text-primary h-8 w-8 animate-spin" />
@@ -99,7 +102,7 @@ const PaketPage = () => {
 
       <section className="bg-background relative min-h-screen py-16">
         {/* Background Gradient */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),_transparent_55%),_radial-gradient(circle_at_bottom,_rgba(45,212,191,0.14),_transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),transparent_55%),radial-gradient(circle_at_bottom,rgba(45,212,191,0.14),transparent_55%)]" />
 
         <div className="container mx-auto mb-10 px-4">
           {/* ============================= */}
@@ -197,7 +200,7 @@ const PaketPage = () => {
 
                       <div className="mt-3 flex flex-col items-center gap-1">
                         <span className="text-primary text-3xl font-bold">
-                          {pkg.price}
+                          {formatPrice(pkg.price)}
                         </span>
 
                         {!pkg.isCustom && (
@@ -277,7 +280,15 @@ const PaketPage = () => {
                           </Button>
                         )
                       ) : hasLoggedin ? (
-                        <Button className="w-full">Beli Sekarang</Button>
+                        <Button
+                          className="w-full"
+                          onClick={() =>
+                            handleCreatePayment({ package_id: pkg.id })
+                          }
+                          disabled={isPending}
+                        >
+                          Beli Sekarang
+                        </Button>
                       ) : (
                         <Button asChild className="w-full" variant="outline">
                           <Link href="/login?redirect=/paket">

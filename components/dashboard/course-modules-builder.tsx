@@ -164,6 +164,15 @@ export function CourseModulesBuilder() {
                     {module.isExpanded && (
                       <div className="border-t bg-slate-50 p-4">
                         <div className="space-y-3">
+                          {(() => {
+                            const errs = (formik.errors as any)?.modules;
+                            const moduleErr = Array.isArray(errs) ? errs[index] : undefined;
+                            return moduleErr ? (
+                              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                Ada data modul yang belum lengkap. Lengkapi field wajib agar bisa disimpan.
+                              </div>
+                            ) : null;
+                          })()}
                           {/* Content based on module type */}
                           {module.type === "video_exam" && (
                             <>
@@ -183,10 +192,20 @@ export function CourseModulesBuilder() {
                                         e.target.value,
                                       )
                                     }
+                                    className={
+                                      (formik.errors as any)?.modules?.[index]?.youtubeUrl
+                                        ? "border-red-500"
+                                        : undefined
+                                    }
                                   />
                                   <p className="text-xs text-slate-500">
                                     Siswa akan melihat video ini dalam bentuk embed.
                                   </p>
+                                  {(formik.errors as any)?.modules?.[index]?.youtubeUrl && (
+                                    <p className="text-xs text-red-600">
+                                      {(formik.errors as any)?.modules?.[index]?.youtubeUrl}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                               <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-white p-3">
@@ -205,10 +224,20 @@ export function CourseModulesBuilder() {
                                         e.target.value,
                                       )
                                     }
+                                    className={
+                                      (formik.errors as any)?.modules?.[index]?.examFormUrl
+                                        ? "border-red-500"
+                                        : undefined
+                                    }
                                   />
                                   <p className="text-xs text-slate-500">
                                     Link form ini akan dibuka ketika siswa mengerjakan ujian.
                                   </p>
+                                  {(formik.errors as any)?.modules?.[index]?.examFormUrl && (
+                                    <p className="text-xs text-red-600">
+                                      {(formik.errors as any)?.modules?.[index]?.examFormUrl}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                             </>
@@ -232,10 +261,20 @@ export function CourseModulesBuilder() {
                                         e.target.value,
                                       )
                                     }
+                                    className={
+                                      (formik.errors as any)?.modules?.[index]?.zoomUrl
+                                        ? "border-red-500"
+                                        : undefined
+                                    }
                                   />
                                   <p className="text-xs text-slate-500">
                                     Link Zoom untuk sesi video/diskusi sinkron.
                                   </p>
+                                  {(formik.errors as any)?.modules?.[index]?.zoomUrl && (
+                                    <p className="text-xs text-red-600">
+                                      {(formik.errors as any)?.modules?.[index]?.zoomUrl}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                               <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-white p-3">
@@ -254,10 +293,20 @@ export function CourseModulesBuilder() {
                                         e.target.value,
                                       )
                                     }
+                                    className={
+                                      (formik.errors as any)?.modules?.[index]?.whatsappGroupUrl
+                                        ? "border-red-500"
+                                        : undefined
+                                    }
                                   />
                                   <p className="text-xs text-slate-500">
                                     Peserta akan diarahkan ke grup WhatsApp untuk diskusi.
                                   </p>
+                                  {(formik.errors as any)?.modules?.[index]?.whatsappGroupUrl && (
+                                    <p className="text-xs text-red-600">
+                                      {(formik.errors as any)?.modules?.[index]?.whatsappGroupUrl}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                             </>
@@ -281,10 +330,20 @@ export function CourseModulesBuilder() {
                                         e.target.value,
                                       )
                                     }
+                                    className={
+                                      (formik.errors as any)?.modules?.[index]?.zoomUrl
+                                        ? "border-red-500"
+                                        : undefined
+                                    }
                                   />
                                   <p className="text-xs text-slate-500">
                                     Link Zoom untuk live class.
                                   </p>
+                                  {(formik.errors as any)?.modules?.[index]?.zoomUrl && (
+                                    <p className="text-xs text-red-600">
+                                      {(formik.errors as any)?.modules?.[index]?.zoomUrl}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                               <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-white p-3">
@@ -303,10 +362,20 @@ export function CourseModulesBuilder() {
                                         e.target.value,
                                       )
                                     }
+                                    className={
+                                      (formik.errors as any)?.modules?.[index]?.examFormUrl
+                                        ? "border-red-500"
+                                        : undefined
+                                    }
                                   />
                                   <p className="text-xs text-slate-500">
                                     Link form untuk ujian setelah live class.
                                   </p>
+                                  {(formik.errors as any)?.modules?.[index]?.examFormUrl && (
+                                    <p className="text-xs text-red-600">
+                                      {(formik.errors as any)?.modules?.[index]?.examFormUrl}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                             </>
@@ -329,10 +398,20 @@ export function CourseModulesBuilder() {
                                       e.target.value,
                                     )
                                   }
+                                  className={
+                                    (formik.errors as any)?.modules?.[index]?.examFormUrl
+                                      ? "border-red-500"
+                                      : undefined
+                                  }
                                 />
                                 <p className="text-xs text-slate-500">
                                   Ujian hanya berupa form tanpa video.
                                 </p>
+                                {(formik.errors as any)?.modules?.[index]?.examFormUrl && (
+                                  <p className="text-xs text-red-600">
+                                    {(formik.errors as any)?.modules?.[index]?.examFormUrl}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           )}

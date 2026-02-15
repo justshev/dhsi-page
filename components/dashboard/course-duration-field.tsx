@@ -1,7 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Clock } from "lucide-react";
-import { formatPrice } from "@/utils/format-price";
 
 export interface PriceFieldProps {
   value: string;
@@ -31,7 +30,6 @@ export default function PriceField({
           type="number"
         />
       </div>
-      <p className="text-sm">{formatPrice(Number(value))}</p>
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );

@@ -3,14 +3,78 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import * as Yup from "yup";
 
 import useGetCourseTitle from "@/hooks/workshop/use-get-course-by-id";
 import { CourseModule, ModuleType } from "@/types/course-module";
+import getWorkshopModules from "@/services/workshop/get-workshop-modules";
 import saveWorkshopModulesRequest, {
   SaveWorkshopModulesPayload,
 } from "@/services/workshop/save-workshop-modules";
+
+const moduleTypes: ModuleType[] = [
+  "video_exam",
+  "video_discussion",
+  "live_class_exam",
+  "exam_only",
+];
+
+const courseModulesSchema = Yup.object({
+  modules: Yup.array()
+    .of(
+      Yup.object({
+        title: Yup.string()
+          .trim()
+          .min(3, "Judul modul minimal 3 karakter")
+          .required("Judul modul wajib diisi"),
+        type: Yup.mixed<ModuleType>()
+          .oneOf(moduleTypes, "Tipe modul tidak valid")
+          .required("Tipe modul wajib dipilih"),
+        date: Yup.string().trim().required("Tanggal modul wajib diisi"),
+        order: Yup.number()
+          .typeError("Urutan modul tidak valid")
+          .integer("Urutan modul tidak valid")
+          .min(1, "Urutan modul tidak valid")
+          .required("Urutan modul wajib diisi"),
+        youtubeUrl: Yup.string().when("type", {
+          is: (t: ModuleType) => t === "video_exam",
+          then: (s) =>
+            s.trim()
+              .min(1, "URL YouTube wajib diisi")
+              .required("URL YouTube wajib diisi"),
+          otherwise: (s) => s.optional(),
+        }),
+        zoomUrl: Yup.string().when("type", {
+          is: (t: ModuleType) =>
+            t === "video_discussion" || t === "live_class_exam",
+          then: (s) =>
+            s.trim().min(1, "URL Zoom wajib diisi").required("URL Zoom wajib diisi"),
+          otherwise: (s) => s.optional(),
+        }),
+        whatsappGroupUrl: Yup.string().when("type", {
+          is: (t: ModuleType) => t === "video_discussion",
+          then: (s) =>
+            s.trim()
+              .min(1, "Link grup WhatsApp wajib diisi")
+              .required("Link grup WhatsApp wajib diisi"),
+          otherwise: (s) => s.optional(),
+        }),
+        examFormUrl: Yup.string().when("type", {
+          is: (t: ModuleType) =>
+            t === "video_exam" || t === "live_class_exam" || t === "exam_only",
+          then: (s) =>
+            s.trim()
+              .min(1, "URL Google Form ujian wajib diisi")
+              .required("URL Google Form ujian wajib diisi"),
+          otherwise: (s) => s.optional(),
+        }),
+      }),
+    )
+    .min(1, "Minimal satu modul harus ditambahkan")
+    .required(),
+});
 
 export interface CourseModulesFormValues {
   modules: CourseModule[];
@@ -23,6 +87,17 @@ const useCourseModulesBuilder = () => {
   const router = useRouter();
   const { id: courseId } = useParams();
   const { title, isLoading } = useGetCourseTitle(courseId as string);
+
+  const { data: existingModulesResponse } = useQuery({
+    queryKey: ["workshop-modules-existing", courseId],
+    queryFn: async () => getWorkshopModules(courseId as string),
+    enabled: Boolean(courseId),
+  });
+
+  const existingMaxOrder = (existingModulesResponse?.data ?? []).reduce(
+    (max, m) => Math.max(max, Number(m.order ?? 0)),
+    0,
+  );
 
   const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
@@ -61,6 +136,8 @@ const useCourseModulesBuilder = () => {
       draftDate: "",
       draftType: null,
     },
+    validationSchema: courseModulesSchema,
+    validateOnMount: true,
     onSubmit: (values) => {
       saveModules(values);
     },
@@ -75,7 +152,7 @@ const useCourseModulesBuilder = () => {
   };
 
   const handleSelectType = (type: ModuleType) => {
-    const nextIndex = formik.values.modules.length + 1;
+    const nextIndex = existingMaxOrder + formik.values.modules.length + 1;
 
     formik.setFieldValue("draftType", type);
     formik.setFieldValue("draftTitle", `Modul ${nextIndex}`);
@@ -101,12 +178,14 @@ const useCourseModulesBuilder = () => {
 
     if (!draftType || !draftDate) return;
 
+    const nextOrder = existingMaxOrder + modules.length + 1;
+
     const newModule: CourseModule = {
       id: `module-${Date.now()}`,
-      title: draftTitle || `Modul ${modules.length + 1}`,
+      title: draftTitle || `Modul ${nextOrder}`,
       type: draftType,
       isExpanded: false,
-      order: modules.length + 1,
+      order: nextOrder,
       date: draftDate,
       youtubeUrl: "",
       zoomUrl: "",
@@ -157,7 +236,7 @@ const useCourseModulesBuilder = () => {
   };
 
   const isSaveDisabled =
-    formik.values.modules.length === 0 || isPending || !formik.dirty;
+    formik.values.modules.length === 0 || isPending || !formik.isValid;
 
   return {
     // course info

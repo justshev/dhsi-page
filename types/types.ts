@@ -49,7 +49,7 @@ export interface CreateWorkshopRequestPayload {
 export type CreditPackage = {
   id: string;
   name: string;
-  price: string;
+  price: number;
   credits?: number;
   bonus?: number;
   bonusLabel?: string;

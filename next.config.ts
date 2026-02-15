@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         hostname: "yieasvusatgerogwlsaq.supabase.co",
         pathname: "./**",
       },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
