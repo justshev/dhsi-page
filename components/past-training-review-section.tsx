@@ -98,10 +98,10 @@ export default function PastTrainingReviewSection() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between mb-3">
                     <Badge
-                      variant={getTypeBadgeVariant(review.trainingType)}
+                      variant={getTypeBadgeVariant(review.training_type)}
                       className="text-xs"
                     >
-                      {getTypeLabel(review.trainingType)}
+                      {getTypeLabel(review.training_type)}
                     </Badge>
                     <div className="flex gap-0.5">
                       {[...Array(5)].map((_, i) => (
@@ -118,11 +118,11 @@ export default function PastTrainingReviewSection() {
                     </div>
                   </div>
                   <Link
-                    href={`/training/${review.trainingId}`}
+                    href={`/training/${review.training_id}`}
                     className="hover:text-primary transition-colors"
                   >
                     <p className="text-sm font-medium text-primary line-clamp-1">
-                      {review.trainingTitle}
+                      {review.training_title}
                     </p>
                   </Link>
                 </CardHeader>
@@ -140,18 +140,18 @@ export default function PastTrainingReviewSection() {
                     <div className="flex items-center gap-3">
                       <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted">
                         <Image
-                          src={review.reviewerAvatar || "/placeholder.svg"}
-                          alt={review.reviewerName}
+                          src={review.reviewer_avatar || "/placeholder.svg"}
+                          alt={review.reviewer_name}
                           fill
                           className="object-cover"
                         />
                       </div>
                       <div>
                         <p className="text-sm font-semibold">
-                          {review.reviewerName}
+                          {review.reviewer_name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {review.reviewerRole}
+                          {review.reviewer_role}
                         </p>
                       </div>
                     </div>
@@ -212,19 +212,19 @@ function TrainingGrid({ trainings, getReviewsForTraining }: TrainingGridProps) {
                       {training.category}
                     </Badge>
                     <Badge variant="outline" className="text-xs gap-1">
-                      {training.isOnline ? (
+                      {training.is_online ? (
                         <Video size={10} />
                       ) : (
                         <Building2 size={10} />
                       )}
-                      {training.isOnline ? "Online" : "Offline"}
+                      {training.is_online ? "Online" : "Offline"}
                     </Badge>
                   </div>
                   <CardTitle className="text-base lg:text-lg line-clamp-2 group-hover:text-primary transition-colors">
                     {training.title}
                   </CardTitle>
                   <CardDescription className="text-sm line-clamp-2">
-                    {training.shortDescription}
+                    {training.short_description}
                   </CardDescription>
                 </CardHeader>
 
@@ -236,7 +236,7 @@ function TrainingGrid({ trainings, getReviewsForTraining }: TrainingGridProps) {
                     </div>
                     <div className="flex items-center gap-1">
                       <Users size={14} />
-                      <span>{training.enrolledParticipants} peserta</span>
+                      <span>{training.enrolled_participants} peserta</span>
                     </div>
                   </div>
 

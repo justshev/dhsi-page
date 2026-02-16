@@ -6,17 +6,17 @@ export type TrainingStatus = "upcoming" | "ongoing" | "completed";
 export interface TrainingSession {
   id: string;
   title: string;
-  shortDescription: string;
-  fullDescription: string;
+  short_description: string;
+  full_description: string;
   type: TrainingType;
   status: TrainingStatus;
   thumbnail: string;
   date: string;
-  endDate?: string;
+  end_date?: string;
   time: string;
-  duration: string;
+  end_time: string;
   location: string;
-  isOnline: boolean;
+  is_online: boolean;
   instructor: {
     name: string;
     title: string;
@@ -24,24 +24,24 @@ export interface TrainingSession {
   };
   category: string;
   level: string;
-  maxParticipants: number;
-  enrolledParticipants: number;
+  max_participants: number;
+  enrolled_participants: number;
   price: string;
   syllabus: string[];
   requirements: string[];
   benefits: string[];
   rating?: number;
-  totalReviews?: number;
+  total_reviews?: number;
 }
 
 export interface TrainingReview {
   id: string;
-  trainingId: string;
-  trainingTitle: string;
-  trainingType: TrainingType;
-  reviewerName: string;
-  reviewerRole: string;
-  reviewerAvatar: string;
+  training_id: string;
+  training_title: string;
+  training_type: TrainingType;
+  reviewer_name: string;
+  reviewer_role: string;
+  reviewer_avatar: string;
   rating: number;
   content: string;
   date: string;
@@ -53,19 +53,19 @@ export const latestTrainings: TrainingSession[] = [
   {
     id: "training-1",
     title: "Certified Cyber Law Practitioner (CCLP)",
-    shortDescription:
+    short_description:
       "Sertifikasi profesional untuk praktisi hukum siber dengan standar internasional.",
-    fullDescription:
+    full_description:
       "Program sertifikasi komprehensif yang dirancang untuk para praktisi hukum yang ingin mendalami aspek hukum siber. Peserta akan mempelajari regulasi data pribadi, kejahatan siber, forensik digital, dan penyelesaian sengketa online. Sertifikasi ini diakui secara nasional dan memberikan kredensial yang kuat dalam industri hukum teknologi.",
     type: "pelatihan",
     status: "upcoming",
     thumbnail: "https://placehold.co/800x600/1e3a5f/ffffff?text=Cyber+Law",
     date: "2026-02-15",
-    endDate: "2026-02-20",
+    end_date: "2026-02-20",
     time: "09:00 - 16:00 WIB",
     duration: "6 hari (48 jam)",
     location: "Hotel Pullman Jakarta Central Park",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "Prof. Dr. Ahmad Sudirman, S.H., M.H.",
       title: "Guru Besar Hukum Pidana & Pakar Hukum Siber",
@@ -73,8 +73,8 @@ export const latestTrainings: TrainingSession[] = [
     },
     category: "Sertifikasi Profesional",
     level: "Advanced",
-    maxParticipants: 30,
-    enrolledParticipants: 22,
+    max_participants: 30,
+    enrolled_participants: 22,
     price: "Rp 12.500.000",
     syllabus: [
       "Pengantar Hukum Siber Indonesia dan Internasional",
@@ -101,20 +101,20 @@ export const latestTrainings: TrainingSession[] = [
   {
     id: "training-2",
     title: "Digital Forensics for Legal Professionals",
-    shortDescription:
+    short_description:
       "Pelatihan intensif forensik digital untuk profesional hukum.",
-    fullDescription:
+    full_description:
       "Pelatihan hands-on yang mengajarkan teknik pengumpulan, preservasi, dan analisis bukti digital. Ditujukan untuk advokat, jaksa, dan hakim yang menangani kasus-kasus terkait teknologi. Peserta akan belajar menggunakan tools forensik standar industri.",
     type: "pelatihan",
     status: "ongoing",
     thumbnail:
       "https://placehold.co/800x600/1e3a5f/ffffff?text=Digital+Forensics",
     date: "2026-01-10",
-    endDate: "2026-01-14",
+    end_date: "2026-01-14",
     time: "09:00 - 17:00 WIB",
     duration: "5 hari (40 jam)",
     location: "Online via Zoom",
-    isOnline: true,
+    is_online: true,
     instructor: {
       name: "Dr. Ir. Rudi Hartono, M.Kom.",
       title: "Pakar Forensik Digital & Konsultan Keamanan",
@@ -122,8 +122,8 @@ export const latestTrainings: TrainingSession[] = [
     },
     category: "Forensik Digital",
     level: "Intermediate",
-    maxParticipants: 25,
-    enrolledParticipants: 25,
+    max_participants: 25,
+    enrolled_participants: 25,
     price: "Rp 8.500.000",
     syllabus: [
       "Prinsip Dasar Forensik Digital",
@@ -147,25 +147,25 @@ export const latestTrainings: TrainingSession[] = [
       "E-book dan materi referensi",
     ],
     rating: 4.9,
-    totalReviews: 45,
+    total_reviews: 45,
   },
   {
     id: "training-3",
     title: "Privacy & Data Protection Officer Training",
-    shortDescription:
+    short_description:
       "Pelatihan DPO sesuai standar UU Perlindungan Data Pribadi.",
-    fullDescription:
+    full_description:
       "Program pelatihan lengkap untuk calon Data Protection Officer sesuai dengan UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi. Mencakup aspek legal, teknis, dan manajerial dari perlindungan data.",
     type: "pelatihan",
     status: "upcoming",
     thumbnail:
       "https://placehold.co/800x600/1e3a5f/ffffff?text=Data+Protection",
     date: "2026-03-01",
-    endDate: "2026-03-03",
+    end_date: "2026-03-03",
     time: "09:00 - 16:00 WIB",
     duration: "3 hari (24 jam)",
     location: "Aston Priority Simatupang Hotel",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "Dr. Siti Rahayu, S.H., M.Hum.",
       title: "Pakar Hukum Perdata & Perlindungan Data",
@@ -173,8 +173,8 @@ export const latestTrainings: TrainingSession[] = [
     },
     category: "Perlindungan Data",
     level: "Intermediate",
-    maxParticipants: 35,
-    enrolledParticipants: 18,
+    max_participants: 35,
+    enrolled_participants: 18,
     price: "Rp 7.500.000",
     syllabus: [
       "Framework UU PDP Indonesia",
@@ -205,8 +205,8 @@ export const upcomingWorkshops: TrainingSession[] = [
   {
     id: "workshop-1",
     title: "Workshop: Menyusun Kebijakan Privasi yang Efektif",
-    shortDescription: "Praktik langsung menyusun privacy policy sesuai UU PDP.",
-    fullDescription:
+    short_description: "Praktik langsung menyusun privacy policy sesuai UU PDP.",
+    full_description:
       "Workshop praktis satu hari untuk menyusun kebijakan privasi yang compliant dengan UU Perlindungan Data Pribadi. Peserta akan membawa pulang template dan framework yang dapat langsung diimplementasikan di organisasinya.",
     type: "workshop",
     status: "upcoming",
@@ -215,7 +215,7 @@ export const upcomingWorkshops: TrainingSession[] = [
     time: "09:00 - 16:00 WIB",
     duration: "1 hari (7 jam)",
     location: "Swiss-Belhotel Mangga Besar",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "Andi Prasetyo, S.H., LL.M.",
       title: "Privacy Counsel & CIPP/E",
@@ -223,8 +223,8 @@ export const upcomingWorkshops: TrainingSession[] = [
     },
     category: "Compliance",
     level: "Beginner",
-    maxParticipants: 40,
-    enrolledParticipants: 28,
+    max_participants: 40,
+    enrolled_participants: 28,
     price: "Rp 2.500.000",
     syllabus: [
       "Elemen Wajib Privacy Policy",
@@ -243,9 +243,9 @@ export const upcomingWorkshops: TrainingSession[] = [
   {
     id: "workshop-2",
     title: "Workshop: Incident Response & Crisis Communication",
-    shortDescription:
+    short_description:
       "Simulasi penanganan insiden siber dan komunikasi krisis.",
-    fullDescription:
+    full_description:
       "Workshop tabletop exercise yang mensimulasikan skenario insiden siber nyata. Peserta akan belajar koordinasi lintas tim, pengambilan keputusan cepat, dan strategi komunikasi krisis yang efektif.",
     type: "workshop",
     status: "upcoming",
@@ -255,7 +255,7 @@ export const upcomingWorkshops: TrainingSession[] = [
     time: "08:30 - 17:00 WIB",
     duration: "1 hari (8 jam)",
     location: "Online via Zoom",
-    isOnline: true,
+    is_online: true,
     instructor: {
       name: "Ir. Budi Santoso, CISSP, CISM",
       title: "Chief Security Officer & Incident Response Expert",
@@ -263,8 +263,8 @@ export const upcomingWorkshops: TrainingSession[] = [
     },
     category: "Keamanan Siber",
     level: "Intermediate",
-    maxParticipants: 30,
-    enrolledParticipants: 15,
+    max_participants: 30,
+    enrolled_participants: 15,
     price: "Rp 3.000.000",
     syllabus: [
       "Incident Response Framework",
@@ -286,8 +286,8 @@ export const upcomingWorkshops: TrainingSession[] = [
   {
     id: "workshop-3",
     title: "Workshop: AI Governance & Legal Compliance",
-    shortDescription: "Memahami regulasi AI dan menyusun governance framework.",
-    fullDescription:
+    short_description: "Memahami regulasi AI dan menyusun governance framework.",
+    full_description:
       "Workshop eksklusif yang membahas landscape regulasi AI di Indonesia dan global, serta cara menyusun AI governance framework yang sesuai dengan prinsip-prinsip etika dan hukum yang berlaku.",
     type: "workshop",
     status: "upcoming",
@@ -296,7 +296,7 @@ export const upcomingWorkshops: TrainingSession[] = [
     time: "09:00 - 16:00 WIB",
     duration: "1 hari (7 jam)",
     location: "The Westin Jakarta",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "Prof. Dr. Bambang Wijaya, S.H., LL.M.",
       title: "Ahli Hukum Tata Negara & AI Ethics Researcher",
@@ -304,8 +304,8 @@ export const upcomingWorkshops: TrainingSession[] = [
     },
     category: "AI & Emerging Tech",
     level: "Advanced",
-    maxParticipants: 25,
-    enrolledParticipants: 20,
+    max_participants: 25,
+    enrolled_participants: 20,
     price: "Rp 4.500.000",
     syllabus: [
       "AI Regulatory Landscape",
@@ -331,19 +331,19 @@ export const completedTrainings: TrainingSession[] = [
   {
     id: "completed-1",
     title: "Masterclass: Cyber Crime Investigation",
-    shortDescription:
+    short_description:
       "Pelatihan investigasi kejahatan siber untuk penegak hukum.",
-    fullDescription:
+    full_description:
       "Program masterclass intensif yang membekali peserta dengan keterampilan investigasi kejahatan siber mulai dari pengumpulan bukti hingga penyusunan berkas perkara.",
     type: "pelatihan",
     status: "completed",
     thumbnail: "https://placehold.co/800x600/1e3a5f/ffffff?text=Cyber+Crime",
     date: "2025-11-15",
-    endDate: "2025-11-19",
+    end_date: "2025-11-19",
     time: "09:00 - 17:00 WIB",
     duration: "5 hari (40 jam)",
     location: "Jakarta Convention Center",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "AKBP Dr. Hendri Wijaya, S.IK., M.H.",
       title: "Kepala Unit Cyber Crime Polri",
@@ -351,8 +351,8 @@ export const completedTrainings: TrainingSession[] = [
     },
     category: "Penegakan Hukum",
     level: "Advanced",
-    maxParticipants: 30,
-    enrolledParticipants: 30,
+    max_participants: 30,
+    enrolled_participants: 30,
     price: "Rp 15.000.000",
     syllabus: [
       "Tipologi Kejahatan Siber",
@@ -363,13 +363,13 @@ export const completedTrainings: TrainingSession[] = [
     requirements: ["Penegak hukum atau profesional keamanan"],
     benefits: ["Sertifikat Masterclass", "Networking dengan praktisi"],
     rating: 4.9,
-    totalReviews: 28,
+    total_reviews: 28,
   },
   {
     id: "completed-2",
     title: "Workshop: Smart Contract & Blockchain Legal Issues",
-    shortDescription: "Aspek hukum smart contract dan teknologi blockchain.",
-    fullDescription:
+    short_description: "Aspek hukum smart contract dan teknologi blockchain.",
+    full_description:
       "Workshop yang mengupas tuntas aspek legal dari smart contract, cryptocurrency, dan teknologi blockchain di Indonesia.",
     type: "workshop",
     status: "completed",
@@ -378,7 +378,7 @@ export const completedTrainings: TrainingSession[] = [
     time: "09:00 - 16:00 WIB",
     duration: "1 hari (7 jam)",
     location: "Online via Zoom",
-    isOnline: true,
+    is_online: true,
     instructor: {
       name: "Dr. Lisa Permata, S.H., M.Kn.",
       title: "Notaris & Blockchain Legal Expert",
@@ -386,8 +386,8 @@ export const completedTrainings: TrainingSession[] = [
     },
     category: "Fintech & Blockchain",
     level: "Intermediate",
-    maxParticipants: 50,
-    enrolledParticipants: 48,
+    max_participants: 50,
+    enrolled_participants: 48,
     price: "Rp 2.000.000",
     syllabus: [
       "Blockchain Technology Overview",
@@ -398,23 +398,23 @@ export const completedTrainings: TrainingSession[] = [
     requirements: ["Terbuka untuk semua profesional"],
     benefits: ["Materi presentasi", "Sertifikat"],
     rating: 4.8,
-    totalReviews: 42,
+    total_reviews: 42,
   },
   {
     id: "completed-3",
     title: "Certified Information Privacy Professional (CIPP)",
-    shortDescription: "Sertifikasi internasional untuk profesional privasi.",
-    fullDescription:
+    short_description: "Sertifikasi internasional untuk profesional privasi.",
+    full_description:
       "Program persiapan ujian sertifikasi CIPP/E yang diakui secara internasional oleh IAPP.",
     type: "pelatihan",
     status: "completed",
     thumbnail: "https://placehold.co/800x600/1e3a5f/ffffff?text=CIPP",
     date: "2025-09-01",
-    endDate: "2025-09-05",
+    end_date: "2025-09-05",
     time: "09:00 - 16:00 WIB",
     duration: "5 hari (35 jam)",
     location: "Hotel Mulia Senayan",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "Maria Gonzales, CIPP/E, CIPM",
       title: "IAPP Certified Trainer",
@@ -422,8 +422,8 @@ export const completedTrainings: TrainingSession[] = [
     },
     category: "Sertifikasi Internasional",
     level: "Advanced",
-    maxParticipants: 25,
-    enrolledParticipants: 25,
+    max_participants: 25,
+    enrolled_participants: 25,
     price: "Rp 18.000.000",
     syllabus: [
       "European Data Protection Framework",
@@ -434,14 +434,14 @@ export const completedTrainings: TrainingSession[] = [
     requirements: ["Profesional dengan pengalaman di bidang privasi"],
     benefits: ["Voucher ujian CIPP/E", "Study materials resmi IAPP"],
     rating: 4.9,
-    totalReviews: 23,
+    total_reviews: 23,
   },
   {
     id: "completed-4",
     title: "Workshop: E-Commerce Dispute Resolution",
-    shortDescription:
+    short_description:
       "Penyelesaian sengketa e-commerce dan perlindungan konsumen.",
-    fullDescription:
+    full_description:
       "Workshop praktis tentang mekanisme penyelesaian sengketa dalam transaksi e-commerce.",
     type: "workshop",
     status: "completed",
@@ -450,7 +450,7 @@ export const completedTrainings: TrainingSession[] = [
     time: "09:00 - 15:00 WIB",
     duration: "1 hari (6 jam)",
     location: "Mercure Jakarta Sabang",
-    isOnline: false,
+    is_online: false,
     instructor: {
       name: "Dewi Kartika, S.H., M.H.",
       title: "Arbiter BANI & E-Commerce Expert",
@@ -458,8 +458,8 @@ export const completedTrainings: TrainingSession[] = [
     },
     category: "E-Commerce",
     level: "Beginner",
-    maxParticipants: 45,
-    enrolledParticipants: 40,
+    max_participants: 45,
+    enrolled_participants: 40,
     price: "Rp 1.500.000",
     syllabus: [
       "Regulasi E-Commerce Indonesia",
@@ -470,7 +470,7 @@ export const completedTrainings: TrainingSession[] = [
     requirements: ["Terbuka untuk umum"],
     benefits: ["Template dokumen", "Sertifikat"],
     rating: 4.7,
-    totalReviews: 35,
+    total_reviews: 35,
   },
 ];
 
@@ -478,12 +478,12 @@ export const completedTrainings: TrainingSession[] = [
 export const trainingReviews: TrainingReview[] = [
   {
     id: "review-1",
-    trainingId: "completed-1",
-    trainingTitle: "Masterclass: Cyber Crime Investigation",
-    trainingType: "pelatihan",
-    reviewerName: "Kompol Agus Dermawan, S.H.",
-    reviewerRole: "Penyidik Cyber Crime",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=AD",
+    training_id: "completed-1",
+    training_title: "Masterclass: Cyber Crime Investigation",
+    training_type: "pelatihan",
+    reviewer_name: "Kompol Agus Dermawan, S.H.",
+    reviewer_role: "Penyidik Cyber Crime",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=AD",
     rating: 5,
     content:
       "Pelatihan yang sangat komprehensif dan aplikatif. Instruktur sangat berpengalaman dan materi langsung bisa diterapkan dalam investigasi nyata. Simulasi kasusnya sangat membantu memahami alur investigasi yang benar.",
@@ -492,12 +492,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-2",
-    trainingId: "completed-1",
-    trainingTitle: "Masterclass: Cyber Crime Investigation",
-    trainingType: "pelatihan",
-    reviewerName: "Iptu Ratna Sari, S.Kom.",
-    reviewerRole: "Analis Digital Forensik",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=RS",
+    training_id: "completed-1",
+    training_title: "Masterclass: Cyber Crime Investigation",
+    training_type: "pelatihan",
+    reviewer_name: "Iptu Ratna Sari, S.Kom.",
+    reviewer_role: "Analis Digital Forensik",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=RS",
     rating: 5,
     content:
       "Materi forensik digitalnya sangat detail dan up-to-date. Saya mendapatkan banyak insight baru tentang teknik investigasi modern yang belum pernah saya pelajari sebelumnya.",
@@ -506,12 +506,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-3",
-    trainingId: "completed-2",
-    trainingTitle: "Workshop: Smart Contract & Blockchain Legal Issues",
-    trainingType: "workshop",
-    reviewerName: "Rina Handayani, S.H., M.Kn.",
-    reviewerRole: "Corporate Lawyer",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=RH",
+    training_id: "completed-2",
+    training_title: "Workshop: Smart Contract & Blockchain Legal Issues",
+    training_type: "workshop",
+    reviewer_name: "Rina Handayani, S.H., M.Kn.",
+    reviewer_role: "Corporate Lawyer",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=RH",
     rating: 5,
     content:
       "Workshop yang sangat membuka wawasan tentang aspek legal blockchain. Dr. Lisa menjelaskan konsep teknis dengan bahasa yang mudah dipahami oleh praktisi hukum.",
@@ -520,12 +520,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-4",
-    trainingId: "completed-2",
-    trainingTitle: "Workshop: Smart Contract & Blockchain Legal Issues",
-    trainingType: "workshop",
-    reviewerName: "Dimas Prakoso, S.H.",
-    reviewerRole: "Fintech Legal Counsel",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=DP",
+    training_id: "completed-2",
+    training_title: "Workshop: Smart Contract & Blockchain Legal Issues",
+    training_type: "workshop",
+    reviewer_name: "Dimas Prakoso, S.H.",
+    reviewer_role: "Fintech Legal Counsel",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=DP",
     rating: 4,
     content:
       "Materi bagus dan relevan dengan perkembangan industri fintech saat ini. Akan lebih baik jika ada sesi hands-on untuk melihat langsung cara kerja smart contract.",
@@ -534,12 +534,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-5",
-    trainingId: "completed-3",
-    trainingTitle: "Certified Information Privacy Professional (CIPP)",
-    trainingType: "pelatihan",
-    reviewerName: "Ayu Lestari, S.Kom., M.M.",
-    reviewerRole: "Data Protection Officer",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=AL",
+    training_id: "completed-3",
+    training_title: "Certified Information Privacy Professional (CIPP)",
+    training_type: "pelatihan",
+    reviewer_name: "Ayu Lestari, S.Kom., M.M.",
+    reviewer_role: "Data Protection Officer",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=AL",
     rating: 5,
     content:
       "Persiapan ujian yang sangat terstruktur. Maria adalah trainer yang luar biasa dengan pemahaman mendalam tentang GDPR. Saya berhasil lulus ujian CIPP/E di percobaan pertama!",
@@ -548,12 +548,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-6",
-    trainingId: "completed-3",
-    trainingTitle: "Certified Information Privacy Professional (CIPP)",
-    trainingType: "pelatihan",
-    reviewerName: "Benny Kurniawan, S.H., LL.M.",
-    reviewerRole: "Privacy Counsel",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=BK",
+    training_id: "completed-3",
+    training_title: "Certified Information Privacy Professional (CIPP)",
+    training_type: "pelatihan",
+    reviewer_name: "Benny Kurniawan, S.H., LL.M.",
+    reviewer_role: "Privacy Counsel",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=BK",
     rating: 5,
     content:
       "Investasi yang sangat worth it untuk karir di bidang privasi. Materi lengkap, instructor berpengalaman, dan networking dengan sesama peserta sangat valuable.",
@@ -562,12 +562,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-7",
-    trainingId: "completed-4",
-    trainingTitle: "Workshop: E-Commerce Dispute Resolution",
-    trainingType: "workshop",
-    reviewerName: "Sinta Dewi, S.H.",
-    reviewerRole: "Legal Staff Marketplace",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=SD",
+    training_id: "completed-4",
+    training_title: "Workshop: E-Commerce Dispute Resolution",
+    training_type: "workshop",
+    reviewer_name: "Sinta Dewi, S.H.",
+    reviewer_role: "Legal Staff Marketplace",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=SD",
     rating: 5,
     content:
       "Workshop praktis yang langsung bisa diaplikasikan. Template dokumen yang diberikan sangat membantu dalam pekerjaan sehari-hari di marketplace.",
@@ -576,12 +576,12 @@ export const trainingReviews: TrainingReview[] = [
   },
   {
     id: "review-8",
-    trainingId: "completed-4",
-    trainingTitle: "Workshop: E-Commerce Dispute Resolution",
-    trainingType: "workshop",
-    reviewerName: "Fajar Rahman, S.E., S.H.",
-    reviewerRole: "Consumer Protection Advocate",
-    reviewerAvatar: "https://placehold.co/100x100/6b7280/ffffff?text=FR",
+    training_id: "completed-4",
+    training_title: "Workshop: E-Commerce Dispute Resolution",
+    training_type: "workshop",
+    reviewer_name: "Fajar Rahman, S.E., S.H.",
+    reviewer_role: "Consumer Protection Advocate",
+    reviewer_avatar: "https://placehold.co/100x100/6b7280/ffffff?text=FR",
     rating: 4,
     content:
       "Memberikan pemahaman yang baik tentang mekanisme ODR. Studi kasus yang dibahas sangat relevan dengan kondisi e-commerce Indonesia saat ini.",
@@ -601,7 +601,7 @@ export function getTrainingById(id: string): TrainingSession | undefined {
 }
 
 export function getReviewsByTrainingId(trainingId: string): TrainingReview[] {
-  return trainingReviews.filter((r) => r.trainingId === trainingId);
+  return trainingReviews.filter((r) => r.training_id === trainingId);
 }
 
 export function formatDate(dateString: string): string {
@@ -664,7 +664,7 @@ export function filterTrainings(
     const matchesSearch =
       searchTerm === "" ||
       training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      training.shortDescription
+      training.short_description
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 

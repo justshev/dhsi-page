@@ -7,6 +7,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
+      {
+        protocol: "https",
+        hostname: "yieasvusatgerogwlsaq.supabase.co",
+        pathname: "./**",
+      },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",

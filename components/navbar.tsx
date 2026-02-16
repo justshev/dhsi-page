@@ -10,6 +10,8 @@ import {
   LayoutDashboard,
   Calculator,
   BookOpen,
+  Shield,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -66,6 +68,13 @@ export default function Navbar() {
             >
               <Calculator className="h-4 w-4" />
               Kalkulator Waris
+            </Link>
+            <Link
+              href="/paralegal"
+              className="text-foreground hover:text-primary flex items-center gap-1 transition"
+            >
+              <Shield className="h-4 w-4" />
+              Paralegal
             </Link>
           </div>
 
@@ -130,6 +139,15 @@ export default function Navbar() {
                         Kelas Saya
                       </Link>
 
+                      <Link
+                        href="/riwayat-transaksi"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <Wallet className="h-4 w-4" />
+                        Riwayat Transaksi
+                      </Link>
+
                       <div className="mt-2 border-t pt-2">
                         <button
                           onClick={() => {
@@ -157,11 +175,13 @@ export default function Navbar() {
               </>
             )}
           </div>
+          <p className="text-lg font-bold sm:hidden">Dewan Hukum Siber Indonesia</p>
 
           {/* Mobile Menu Button */}
           <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
+          
         </div>
 
         {/* Mobile Menu */}
@@ -191,6 +211,13 @@ export default function Navbar() {
             >
               <Calculator className="h-4 w-4" />
               Kalkulator Waris
+            </Link>
+            <Link
+              href="/paralegal"
+              className="text-foreground hover:text-primary flex items-center gap-2"
+            >
+              <Shield className="h-4 w-4" />
+              Paralegal
             </Link>
 
             {hasLoggedin && user ? (
@@ -232,6 +259,15 @@ export default function Navbar() {
                 >
                   <BookOpen className="h-4 w-4" />
                   Kelas Saya
+                </Link>
+
+                <Link
+                  href="/riwayat-transaksi"
+                  className="flex items-center gap-2 px-2 py-2 text-slate-700"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Wallet className="h-4 w-4" />
+                  Riwayat Transaksi
                 </Link>
 
                 <Button

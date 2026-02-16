@@ -18,6 +18,7 @@ const useRegister = () => {
     mutationFn: registerRequest,
     onSuccess: async (data) => {
       toast.success(data.message || "Registrasi berhasil");
+      window.location.href = "/";
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       router.push("/login");
     },

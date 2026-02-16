@@ -17,14 +17,15 @@ export const metadata: Metadata = {
   description:
     "Platform pelatihan dan edukasi hukum digital, keamanan siber, dan perlindungan data",
   icons: {
-    icon: "/logo.webp", // favicon utama
+    icon: "/logo.webp",
     shortcut: "/logo.webp",
-    apple: "/logo.webp", // untuk iOS home screen
+    apple: "/logo.webp",
   },
 };
 
 import TanstackProvider from "@/lib/tanstack-provider";
 import { Toaster } from "sonner";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -36,6 +37,11 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Toaster richColors position="bottom-right" />
         <TanstackProvider>{children}</TanstackProvider>
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
